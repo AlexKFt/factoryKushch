@@ -1,27 +1,29 @@
 #ifndef MENU_H
 #define MENU_H
 
-void startMenu();
+#include "CompressorStation.hpp"
+#include "Pipe.hpp"
+
 
 void showActions();
 
 int inputForMenu();
 
-void pickCommand(int commandIndex);
+void pickCommand(int commandIndex, CompressorStation& station, Pipe& pipe);
 
-void addPipe();
+void addPipe(Pipe& pipe);
 
-void addCompressorStation();
+void addCompressorStation(CompressorStation& station);
 
-void showObjectsList();
+void showObjectsList(CompressorStation& station, Pipe& pipe);
 
-void editPipe();
+void editPipe(Pipe& pipe);
 
-void editCompressorStation();
+void editCompressorStation(CompressorStation& station);
 
-void saveConfiguration();
+void saveConfiguration(CompressorStation& station, Pipe& pipe);
 
-void uploadChanges();
+void uploadChanges(CompressorStation& station, Pipe& pipe);
 
 
 

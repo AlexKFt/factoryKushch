@@ -9,7 +9,7 @@
 
 
 
-void createCompressorStation(CompressorStation& station)
+void InitializeCompressorStation(CompressorStation& station)
 {
     fillStationNameFor(station);
     fillWorkshopsNumberFor(station);
@@ -133,45 +133,24 @@ void print(CompressorStation& station)
     std::cout << "station efficiency: " << station.perfomRateZeroToHundred << std::endl;
 }
 
-void writeInFile(CompressorStation& station)
+void writeInFile(std::ofstream& fout,CompressorStation& station)
 {
-    std::ofstream fout;
-    std::string fileName;
-
-    while (!fout.is_open()) 
-    {
-        std::cout << "Enter the name of file: ";
-        std::cin >> fileName;
-        clearInputBuffer();
-        fout.open(fileName, std::ios::app);
-    }
     fout << station.name << '\n' 
          << station.numberOfWorkshops << ' ' 
          << station.numberOfActiveWorkshops << ' ' 
          << station.perfomRateZeroToHundred << '\n';
 
-    fout.close();
 }
 
-void readFromFileIn(CompressorStation& station)
+void readFromFileIn(std::ifstream& fin, CompressorStation& station)
 {
-    std::ifstream fin;
-    std::string fileName;
     std::string content;
     std::stringstream buffer;
 
-    while (!fin.is_open())
-    {
-        std::cout << "Enter the name of file: ";
-        std::cin >> fileName;
-        clearInputBuffer();
-        fin.open(fileName);
-    }
     getline(fin, station.name);
     getline(fin, content); 
     buffer << content; 
     buffer >> station.numberOfWorkshops 
            >> station.numberOfActiveWorkshops 
            >> station.perfomRateZeroToHundred;
-    fin.close();
 }

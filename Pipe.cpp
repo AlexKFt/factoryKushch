@@ -7,7 +7,7 @@
 
 
 
-void createPipe(Pipe& pipe)
+void InitializePipe(Pipe& pipe)
 {
     defineLengthImMetresFor(pipe);
     defineDiameterInMetresFor(pipe);
@@ -69,44 +69,19 @@ void setRepairConditionTo(Pipe& pipe, bool status)
     pipe.isUnderRepair = status;
 }
 
-void writeInFile(Pipe& pipe)
+void writeInFile(std::ofstream& fout, Pipe& pipe)
 {
-    std::ofstream fout;
-    std::string fileName;
-
-    while (!fout.is_open())
-    {
-        std::cout << "Enter the name of file: ";
-        std::cin >> fileName;
-        clearInputBuffer();
-        fout.open(fileName, std::ios::app);
-    }
-
     fout << pipe.lengthInMetres << ' ' 
          << pipe.diameterInMetres << ' ' 
          << pipe.isUnderRepair << '\n';
-
-    fout.close();
 }
 
-void readFromFileIn(Pipe& pipe)
+void readFromFileIn(std::ifstream& fin, Pipe& pipe)
 {
-    std::ifstream fin;
-    std::string fileName;
     std::string content;
     std::stringstream buffer;
-
-    while (!fin.is_open())
-    {
-        std::cout << "Enter the name of file: ";
-        std::cin >> fileName;
-        clearInputBuffer();
-        fin.open(fileName);
-    }
 
     getline(fin, content);
     buffer << content;
     buffer >> pipe.lengthInMetres >> pipe.diameterInMetres >> pipe.isUnderRepair;
-    fin.close();
-    
 }

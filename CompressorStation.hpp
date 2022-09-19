@@ -10,7 +10,7 @@ struct CompressorStation
     int perfomRateZeroToHundred;
 };
 
-void createCompressorStation(CompressorStation& station);
+void InitializeCompressorStation(CompressorStation& station);
 
 void fillStationNameFor(CompressorStation& station);
 
@@ -30,9 +30,9 @@ void StopWorkshopAt(CompressorStation& station);
 
 void print(CompressorStation& station);
 
-void writeInFile(CompressorStation& station);
+void writeInFile(std::ofstream& fout, CompressorStation& station);
 
-void readFromFileIn(CompressorStation& station);
+void readFromFileIn(std::ifstream& fin, CompressorStation& station);
 
 
 #endif

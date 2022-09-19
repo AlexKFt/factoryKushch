@@ -1,18 +1,23 @@
-#include "menu.hpp"
-#include "CompressorStation.hpp"
-#include "Pipe.hpp"
 #include <iostream>
+#include <fstream>
+#include "menu.hpp"
 #include "utilites.hpp"
 
-void startMenu()
+int main()
 {   
+    CompressorStation station1;
+    Pipe pipe1;
+
     int commandIndex;
     
-    showActions();
-    commandIndex = inputForMenu();
+    while(true)
+    {
+        showActions();
+        commandIndex = inputForMenu();
+        pickCommand(commandIndex, station1, pipe1);
+    }
     
-    pickCommand(commandIndex);
-    
+    return 0;
 }
 
 
@@ -38,7 +43,7 @@ int inputForMenu()
 
     for(;;)
     {
-        if ((std::cin >> input).good() && (input >= commandIndexLowBound) && (input <= commandIndexUpperBound))   // !!! FIXME magic numbers
+        if ((std::cin >> input).good() && (input >= commandIndexLowBound) && (input <= commandIndexUpperBound))  
         {
             clearInputBuffer();
             return input;
@@ -54,35 +59,35 @@ int inputForMenu()
     }
 }
 
-void pickCommand(int commandIndex)
+void pickCommand(int commandIndex, CompressorStation& station, Pipe& pipe)
 {
     if (commandIndex == 1)
     {
-        addPipe();
+        addPipe(pipe);
     }
     else if (commandIndex == 2)
     {
-        addCompressorStation();
+        addCompressorStation(station);
     }
     else if (commandIndex == 3)
     {
-        showObjectsList();
+        showObjectsList(station, pipe);
     }
     else if (commandIndex == 4)
     {
-        editPipe();
+        editPipe(pipe);
     }
     else if (commandIndex == 5)
     {
-        editCompressorStation();
+        editCompressorStation(station);
     }
     else if (commandIndex == 6)
     {
-        saveConfiguration();
+        saveConfiguration(station, pipe);
     }
     else if (commandIndex == 7)
     {
-        uploadChanges();
+        uploadChanges(station, pipe);
     }
     else if (commandIndex == 0)
     {
@@ -90,46 +95,64 @@ void pickCommand(int commandIndex)
     }
 }
 
-void addPipe()
+void addPipe(Pipe& pipe)
 {
-    Pipe pipe;
-    createPipe(pipe);
+    InitializePipe(pipe);
+}
+
+void addCompressorStation(CompressorStation& station)
+{
+    InitializeCompressorStation(station);
+}
+
+void showObjectsList(CompressorStation& station, Pipe& pipe)
+{
     print(pipe);
-    writeInFile(pipe);
+    print(station);
 }
 
-void addCompressorStation()
+void editPipe(Pipe& pipe)
 {
-    CompressorStation cs;
-    createCompressorStation(cs);
-    print(cs);
-    writeInFile(cs);
-    CompressorStation cs2;
-    readFromFileIn(cs2);
-    print(cs);
+    bool status;
+
+    std::cout << "Enter repair condition of pipe: " << std::endl;
+    std::cin >> status;
+    clearInputBuffer();
+    setRepairConditionTo(pipe, status);
 }
 
-void showObjectsList()
-{
+void editCompressorStation(CompressorStation& station)
+{   
+    bool activation;
 
+    std::cout << "To stop one workshop enter 0 " << std::endl;
+    std::cout << "To activate new workshop enter 1 " << std::endl;
+    std::cin >> activation;
+    clearInputBuffer();
+
+    if(activation)
+        activateWorkshopAt(station);
+    else
+        StopWorkshopAt(station);
 }
 
-void editPipe()
+void saveConfiguration(CompressorStation& station, Pipe& pipe)
 {
+    std::ofstream fout;
 
+    OpenFileForWriting(fout); // !!! FIX ME - BAD NAME FOR FUNCTION
+    writeInFile(fout, station);
+    writeInFile(fout, pipe);
+
+    fout.close();
 }
 
-void editCompressorStation()
+void uploadChanges(CompressorStation& station, Pipe& pipe)
 {
+    std::ifstream fin;
 
-}
-
-void saveConfiguration()
-{
-
-}
-
-void uploadChanges()
-{
-    
+    OpenFileForReading(fin);
+    readFromFileIn(fin, station);
+    readFromFileIn(fin, pipe);
+    fin.close();
 }

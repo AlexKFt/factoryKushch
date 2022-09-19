@@ -9,7 +9,7 @@ struct Pipe
     bool isUnderRepair;
 };
 
-void createPipe(Pipe& pipe);
+void InitializePipe(Pipe& pipe);
 
 void defineLengthImMetresFor(Pipe& pipe);
 
@@ -23,9 +23,9 @@ void setRepairConditionTo(Pipe& pipe, bool status);
 
 float positiveFloatInput();
 
-void writeInFile(Pipe& pipe);
+void writeInFile(std::ofstream& fout, Pipe& pipe);
 
-void readFromFileIn(Pipe& pipe);
+void readFromFileIn(std::ifstream& fin, Pipe& pipe);
 
 
 #endif
