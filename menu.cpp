@@ -105,7 +105,7 @@ void addCompressorStation(CompressorStation& station)
     InitializeCompressorStation(station);
 }
 
-void showObjectsList(CompressorStation& station, Pipe& pipe)
+void showObjectsList(const CompressorStation& station, const Pipe& pipe)
 {
     print(pipe);
     print(station);
@@ -136,7 +136,7 @@ void editCompressorStation(CompressorStation& station)
         StopWorkshopAt(station);
 }
 
-void saveConfiguration(CompressorStation& station, Pipe& pipe)
+void saveConfiguration(const CompressorStation& station,const Pipe& pipe)
 {
     std::ofstream fout;
 

@@ -15,13 +15,13 @@ void addPipe(Pipe& pipe);
 
 void addCompressorStation(CompressorStation& station);
 
-void showObjectsList(CompressorStation& station, Pipe& pipe);
+void showObjectsList(const CompressorStation& station, const Pipe& pipe);
 
 void editPipe(Pipe& pipe);
 
 void editCompressorStation(CompressorStation& station);
 
-void saveConfiguration(CompressorStation& station, Pipe& pipe);
+void saveConfiguration(const CompressorStation& station, const Pipe& pipe);
 
 void uploadChanges(CompressorStation& station, Pipe& pipe);
 

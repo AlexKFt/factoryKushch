@@ -8,6 +8,8 @@ struct CompressorStation
     int numberOfWorkshops;
     int numberOfActiveWorkshops;
     int perfomRateZeroToHundred;
+
+    bool wasDefined = false;
 };
 
 void InitializeCompressorStation(CompressorStation& station);
@@ -28,11 +30,13 @@ void activateWorkshopAt(CompressorStation& station);
 
 void StopWorkshopAt(CompressorStation& station);
 
-void print(CompressorStation& station);
+void print(const CompressorStation& station);
 
-void writeInFile(std::ofstream& fout, CompressorStation& station);
+void writeInFile(std::ofstream& fout,const CompressorStation& station);
 
 void readFromFileIn(std::ifstream& fin, CompressorStation& station);
+
+std::ostream& operator<<(std::ostream& out, const CompressorStation& station);
 
 
 #endif

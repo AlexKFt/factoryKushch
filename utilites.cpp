@@ -14,13 +14,11 @@ void OpenFileForWriting(std::ofstream& fout)
 
     while (!fout.is_open())
     {
-        std::cout << "Enter the name of file: ";
-        std::cin >> fileName;
-        clearInputBuffer();
-        fout.open(fileName, std::ios::app); // !!! FIX ME - I should know is this file new one 
-                                            // or there is some data inside 
+        fileName = getFileName();
+        fout.open(fileName, std::ios::out);
     }
 }
+
 
 void OpenFileForReading(std::ifstream& fin)
 {
@@ -28,10 +26,20 @@ void OpenFileForReading(std::ifstream& fin)
 
     while (!fin.is_open())
     {
-        std::cout << "Enter the name of file: ";
-        std::cin >> fileName;
-        clearInputBuffer();
-        fin.open(fileName, std::ios::app); /// !!! FIX ME - append is not appropriate method for reading the file
+        fileName = getFileName();
+        fin.open(fileName, std::ios::in);
     }
+}
+
+
+std::string getFileName()
+{
+    std::string fileName;
+
+    std::cout << "Enter the name of file: ";
+    std::cin >> fileName;
+    clearInputBuffer();
+
+    return fileName;
 }
 

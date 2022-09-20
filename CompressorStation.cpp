@@ -7,14 +7,13 @@
 #include "utilites.hpp"
 
 
-
-
 void InitializeCompressorStation(CompressorStation& station)
 {
     fillStationNameFor(station);
     fillWorkshopsNumberFor(station);
     fillActiveWorkshopsNumberFor(station);
     setEfficiencyTo(station);
+    station.wasDefined = true;
 }
 
 void fillStationNameFor(CompressorStation& station)
@@ -23,7 +22,7 @@ void fillStationNameFor(CompressorStation& station)
     getline(std::cin, station.name);
 }
 
-void fillWorkshopsNumberFor(CompressorStation& station)
+void fillWorkshopsNumberFor(CompressorStation& station) 
 {
     std::cout << "Enter number of workshops: ";
 
@@ -125,21 +124,39 @@ bool activeWorkshopLeftAt(CompressorStation& station)
 }
 
 
-void print(CompressorStation& station)
+void print(const CompressorStation& station)
 {
-    std::cout << "name: " << station.name << std::endl;
-    std::cout << "number of workshops: "<< station.numberOfWorkshops << std::endl;
-    std::cout << "number of active workshops: " << station.numberOfActiveWorkshops << std::endl;
-    std::cout << "station efficiency: " << station.perfomRateZeroToHundred << std::endl;
+    if (!station.wasDefined)
+    {
+        std::cout << "There is no object yet!\n";
+    }
+    else
+        std::cout << station;
 }
 
-void writeInFile(std::ofstream& fout,CompressorStation& station)
+std::ostream& operator<<(std::ostream& out, const CompressorStation& station)
 {
-    fout << station.name << '\n' 
-         << station.numberOfWorkshops << ' ' 
-         << station.numberOfActiveWorkshops << ' ' 
-         << station.perfomRateZeroToHundred << '\n';
+    out << "name: " << station.name << std::endl;
+    out << "number of workshops: "<< station.numberOfWorkshops << std::endl;
+    out << "number of active workshops: " << station.numberOfActiveWorkshops << std::endl;
+    out << "station efficiency: " << station.perfomRateZeroToHundred << std::endl;
 
+    return out;
+}
+
+void writeInFile(std::ofstream& fout, const CompressorStation& station)
+{   
+    if (!station.wasDefined)
+    {
+        std::cout << "The station should be initialized! \n";
+    }
+    else
+    {
+        fout << station.name << '\n' 
+             << station.numberOfWorkshops << ' ' 
+             << station.numberOfActiveWorkshops << ' ' 
+             << station.perfomRateZeroToHundred << '\n';
+    }
 }
 
 void readFromFileIn(std::ifstream& fin, CompressorStation& station)
@@ -149,8 +166,11 @@ void readFromFileIn(std::ifstream& fin, CompressorStation& station)
 
     getline(fin, station.name);
     getline(fin, content); 
+
     buffer << content; 
     buffer >> station.numberOfWorkshops 
            >> station.numberOfActiveWorkshops 
            >> station.perfomRateZeroToHundred;
+
+    station.wasDefined = true;
 }

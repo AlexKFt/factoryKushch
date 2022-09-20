@@ -12,7 +12,7 @@ void InitializePipe(Pipe& pipe)
     defineLengthImMetresFor(pipe);
     defineDiameterInMetresFor(pipe);
     defineRepairConditionFor(pipe);
-
+    pipe.wasDefined = true;
 }
 
 void defineLengthImMetresFor(Pipe& pipe)
@@ -57,11 +57,25 @@ void defineRepairConditionFor(Pipe& pipe)
     clearInputBuffer();
 }
 
-void print(Pipe& pipe)
+void print(const Pipe& pipe)
 {
-    std::cout << "Length of pipe: " << pipe.lengthInMetres << std::endl;
-    std::cout << "Diameter of pipe: " << pipe.diameterInMetres << std::endl;
-    std::cout << "Is under repair: " << std::boolalpha << pipe.isUnderRepair << std::endl;
+    if (!pipe.wasDefined)
+    {
+        std::cout << "There is no object yet!\n";
+    }
+    else
+    {
+        std::cout << pipe;
+    }
+}
+
+std::ostream& operator<<(std::ostream& out, const Pipe& pipe)
+{
+    out << "Length of pipe: " << pipe.lengthInMetres << std::endl;
+    out << "Diameter of pipe: " << pipe.diameterInMetres << std::endl;
+    out << "Is under repair: " << std::boolalpha << pipe.isUnderRepair << std::endl;
+
+    return out;
 }
 
 void setRepairConditionTo(Pipe& pipe, bool status)
@@ -69,11 +83,19 @@ void setRepairConditionTo(Pipe& pipe, bool status)
     pipe.isUnderRepair = status;
 }
 
-void writeInFile(std::ofstream& fout, Pipe& pipe)
-{
-    fout << pipe.lengthInMetres << ' ' 
-         << pipe.diameterInMetres << ' ' 
-         << pipe.isUnderRepair << '\n';
+void writeInFile(std::ofstream& fout, const Pipe& pipe)
+{   
+    if (!pipe.wasDefined)
+    {
+        std::cout << "Pipe should be initialized!\n";
+    }
+    else
+    {
+        fout << pipe.lengthInMetres << ' ' 
+             << pipe.diameterInMetres << ' ' 
+             << pipe.isUnderRepair << '\n';
+    }
+    
 }
 
 void readFromFileIn(std::ifstream& fin, Pipe& pipe)
@@ -84,4 +106,5 @@ void readFromFileIn(std::ifstream& fin, Pipe& pipe)
     getline(fin, content);
     buffer << content;
     buffer >> pipe.lengthInMetres >> pipe.diameterInMetres >> pipe.isUnderRepair;
+    pipe.wasDefined = true;
 }
