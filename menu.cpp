@@ -140,7 +140,7 @@ void saveConfiguration(const CompressorStation& station,const Pipe& pipe)
 {
     std::ofstream fout;
 
-    OpenFileForWriting(fout); // !!! FIX ME - BAD NAME FOR FUNCTION
+    OpenFileForWriting(fout);
     writeInFile(fout, station);
     writeInFile(fout, pipe);
 
@@ -152,7 +152,7 @@ void uploadChanges(CompressorStation& station, Pipe& pipe)
     std::ifstream fin;
 
     OpenFileForReading(fin);
-    readFromFileIn(fin, station);
+    readFromFileIn(fin, station);// !!! FIX ME - BAD NAME FOR FUNCTION
     readFromFileIn(fin, pipe);
     fin.close();
 }
