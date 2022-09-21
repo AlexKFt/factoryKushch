@@ -61,7 +61,7 @@ void print(const Pipe& pipe)
 {
     if (!pipe.wasDefined)
     {
-        std::cout << "There is no object yet!\n";
+        std::cout << "There is no pipe yet!\n";
     }
     else
     {

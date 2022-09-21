@@ -11,6 +11,7 @@ struct Pipe
     bool wasDefined = false;
 };
 
+
 void InitializePipe(Pipe& pipe);
 
 void defineLengthImMetresFor(Pipe& pipe);

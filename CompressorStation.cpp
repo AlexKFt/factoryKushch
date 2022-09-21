@@ -128,7 +128,7 @@ void print(const CompressorStation& station)
 {
     if (!station.wasDefined)
     {
-        std::cout << "There is no object yet!\n";
+        std::cout << "There is no station yet!\n";
     }
     else
         std::cout << station;

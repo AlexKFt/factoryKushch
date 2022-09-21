@@ -4,8 +4,8 @@
 void clearInputBuffer();
 
 
-void OpenFileForWriting(std::ofstream& fout);
+bool fileIsReadyForWriting(std::ofstream& fout);
 
-void OpenFileForReading(std::ifstream& fin);
+bool fileIsReadyForReading(std::ifstream& fin);
 
 std::string getFileName();

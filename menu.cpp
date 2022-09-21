@@ -5,8 +5,8 @@
 
 int main()
 {   
-    CompressorStation station1;
-    Pipe pipe1;
+    CompressorStation station;
+    Pipe pipe;
 
     int commandIndex;
     
@@ -14,7 +14,7 @@ int main()
     {
         showActions();
         commandIndex = inputForMenu();
-        pickCommand(commandIndex, station1, pipe1);
+        pickCommand(commandIndex, station, pipe);
     }
     
     return 0;
@@ -140,19 +140,39 @@ void saveConfiguration(const CompressorStation& station,const Pipe& pipe)
 {
     std::ofstream fout;
 
-    OpenFileForWriting(fout);
-    writeInFile(fout, station);
-    writeInFile(fout, pipe);
-
-    fout.close();
+    if(!station.wasDefined)
+    {
+        std::cout << "There is no station\n";
+    }
+    else if (!pipe.wasDefined)
+    {
+        std::cout << "There is no pipe\n";
+    }
+    else if (fileIsReadyForWriting(fout))
+    {
+        writeInFile(fout, station);
+        writeInFile(fout, pipe);
+        fout.close();
+    }
+    else
+    {
+        std::cout << "There is an error, file wasn't save!\n";
+    }
+    
 }
 
 void uploadChanges(CompressorStation& station, Pipe& pipe)
 {
     std::ifstream fin;
 
-    OpenFileForReading(fin);
-    readFromFileIn(fin, station);// !!! FIX ME - BAD NAME FOR FUNCTION
-    readFromFileIn(fin, pipe);
-    fin.close();
+    if(fileIsReadyForReading(fin)) 
+    {
+        readFromFileIn(fin, station);
+        readFromFileIn(fin, pipe);
+        fin.close();
+    }
+    else
+    {
+        std::cout << "This file is not available\n";
+    }
 }
