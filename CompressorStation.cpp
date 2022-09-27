@@ -1,6 +1,5 @@
 #include <fstream>
 #include <string>
-#include <sstream>
 #include "CompressorStation.hpp"
 #include <limits>
 #include <iostream>
@@ -115,7 +114,7 @@ bool freeWorkshopExistAt(CompressorStation& station)
 void StopWorkshopAt(CompressorStation& station)
 {
     if (activeWorkshopLeftAt(station))
-    station.numberOfActiveWorkshops--;
+        station.numberOfActiveWorkshops--;
 }
 
 bool activeWorkshopLeftAt(CompressorStation& station)
@@ -153,8 +152,8 @@ void writeInFile(std::ofstream& fout, const CompressorStation& station)
     else
     {
         fout << station.name << '\n' 
-             << station.numberOfWorkshops << ' ' 
-             << station.numberOfActiveWorkshops << ' ' 
+             << station.numberOfWorkshops << '\n' 
+             << station.numberOfActiveWorkshops << '\n' 
              << station.perfomRateZeroToHundred << '\n';
     }
 }
@@ -162,15 +161,12 @@ void writeInFile(std::ofstream& fout, const CompressorStation& station)
 void readFromFileIn(std::ifstream& fin, CompressorStation& station)
 {
     std::string content;
-    std::stringstream buffer;
 
     getline(fin, station.name);
     getline(fin, content); 
-
-    buffer << content; 
-    buffer >> station.numberOfWorkshops 
-           >> station.numberOfActiveWorkshops 
-           >> station.perfomRateZeroToHundred;
+    fin >> station.numberOfWorkshops;
+    fin >> station.numberOfActiveWorkshops;
+    fin >> station.perfomRateZeroToHundred;
 
     station.wasDefined = true;
 }

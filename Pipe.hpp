@@ -5,7 +5,7 @@
 struct Pipe
 {
     float lengthInMetres;
-    float diameterInMetres;
+    float diameter;
     bool isUnderRepair;
 
     bool wasDefined = false;
@@ -16,7 +16,7 @@ void InitializePipe(Pipe& pipe);
 
 void defineLengthImMetresFor(Pipe& pipe);
 
-void defineDiameterInMetresFor(Pipe& pipe);
+void defineDiameterFor(Pipe& pipe);
 
 void defineRepairConditionFor(Pipe& pipe);
 

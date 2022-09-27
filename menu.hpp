@@ -25,6 +25,8 @@ void saveConfiguration(const CompressorStation& station, const Pipe& pipe);
 
 void uploadChanges(CompressorStation& station, Pipe& pipe);
 
+void askForStorage(const CompressorStation& station,const Pipe& pipe);
+
 
 
 #endif

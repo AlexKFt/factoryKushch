@@ -10,7 +10,7 @@
 void InitializePipe(Pipe& pipe)
 {
     defineLengthImMetresFor(pipe);
-    defineDiameterInMetresFor(pipe);
+    defineDiameterFor(pipe);
     defineRepairConditionFor(pipe);
     pipe.wasDefined = true;
 }
@@ -21,10 +21,10 @@ void defineLengthImMetresFor(Pipe& pipe)
     pipe.lengthInMetres = positiveFloatInput();
 }
 
-void defineDiameterInMetresFor(Pipe& pipe)
+void defineDiameterFor(Pipe& pipe)
 {
     std::cout << "Enter diameter of pipe in metres: ";
-    pipe.diameterInMetres = positiveFloatInput();
+    pipe.diameter = positiveFloatInput();
 }
 
 float positiveFloatInput()
@@ -52,7 +52,7 @@ float positiveFloatInput()
 
 void defineRepairConditionFor(Pipe& pipe)
 {
-    std::cout << "Is pipe undere repair? ";
+    std::cout << "Is pipe undere repair?\n Enter 0 if no\n Enter 1 if yes\n ";
     std::cin >> pipe.isUnderRepair;
     clearInputBuffer();
 }
@@ -72,7 +72,7 @@ void print(const Pipe& pipe)
 std::ostream& operator<<(std::ostream& out, const Pipe& pipe)
 {
     out << "Length of pipe: " << pipe.lengthInMetres << std::endl;
-    out << "Diameter of pipe: " << pipe.diameterInMetres << std::endl;
+    out << "Diameter of pipe: " << pipe.diameter << std::endl;
     out << "Is under repair: " << std::boolalpha << pipe.isUnderRepair << std::endl;
 
     return out;
@@ -92,7 +92,7 @@ void writeInFile(std::ofstream& fout, const Pipe& pipe)
     else
     {
         fout << pipe.lengthInMetres << ' ' 
-             << pipe.diameterInMetres << ' ' 
+             << pipe.diameter << ' ' 
              << pipe.isUnderRepair << '\n';
     }
     
@@ -105,6 +105,6 @@ void readFromFileIn(std::ifstream& fin, Pipe& pipe)
 
     getline(fin, content);
     buffer << content;
-    buffer >> pipe.lengthInMetres >> pipe.diameterInMetres >> pipe.isUnderRepair;
+    buffer >> pipe.lengthInMetres >> pipe.diameter >> pipe.isUnderRepair;
     pipe.wasDefined = true;
 }

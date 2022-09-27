@@ -23,6 +23,7 @@ int main()
 
 void showActions()
 {
+    std::cout << "Command list: " << std::endl;
     std::cout << "1: Add pipe" << std::endl;
     std::cout << "2: Add compressor station" << std::endl;
     std::cout << "3: Show object's list" << std::endl;
@@ -31,6 +32,7 @@ void showActions()
     std::cout << "6: Save" << std::endl;
     std::cout << "7: Upload" << std::endl;
     std::cout << "0: Exit" << std::endl;
+    std::cout << "\nEnter command index(0 - 7) : ";
 }
 
 
@@ -91,6 +93,7 @@ void pickCommand(int commandIndex, CompressorStation& station, Pipe& pipe)
     }
     else if (commandIndex == 0)
     {
+        askForStorage(station, pipe);
         exit(0);
     }
 }
@@ -175,4 +178,19 @@ void uploadChanges(CompressorStation& station, Pipe& pipe)
     {
         std::cout << "This file is not available\n";
     }
+}
+
+void askForStorage(const CompressorStation& station,const Pipe& pipe)
+{
+    std::cout << "Do you want to save current data?" << std::endl
+              << " Enter 0 if no\n Enter 1 if yes" << std::endl;
+    bool shouldBeSaved;
+
+    std::cin  >> shouldBeSaved;
+    clearInputBuffer();
+
+    if (shouldBeSaved)
+    {
+        saveConfiguration(station, pipe);
+    }   
 }
