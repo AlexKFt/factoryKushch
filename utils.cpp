@@ -1,6 +1,5 @@
-#include "utilites.hpp"
-#include <iostream>
-#include <limits>
+#include "utils.hpp"
+
 
 void clearInputBuffer()
 {
@@ -43,4 +42,3 @@ std::string getFileName()
 
     return fileName;
 }
-

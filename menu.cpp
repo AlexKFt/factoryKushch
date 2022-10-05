@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "menu.hpp"
-#include "utilites.hpp"
+#include "utils.hpp"
 
 int main()
 {   
@@ -9,6 +9,7 @@ int main()
     Pipe pipe;
 
     int commandIndex;
+
     
     while(true)
     {
@@ -36,29 +37,15 @@ void showActions()
 }
 
 
-
 int inputForMenu()
 {
     const int commandIndexLowBound = 0;
     const int commandIndexUpperBound = 7;
     int input;
 
-    for(;;)
-    {
-        if ((std::cin >> input).good() && (input >= commandIndexLowBound) && (input <= commandIndexUpperBound))  
-        {
-            clearInputBuffer();
-            return input;
-        }
-        else if (std::cin.fail())
-        {
-            clearInputBuffer();
-            std::cout << "Error. There should be a number!\n";
-        }else
-        {
-            std::cout << "There is no such instruction\n";
-        }
-    }
+    input = getAppropriateNumberInLimits(Interval(commandIndexLowBound, commandIndexUpperBound, true));
+    
+    return input;
 }
 
 void pickCommand(int commandIndex, CompressorStation& station, Pipe& pipe)
@@ -142,24 +129,41 @@ void editCompressorStation(CompressorStation& station)
 void saveConfiguration(const CompressorStation& station,const Pipe& pipe)
 {
     std::ofstream fout;
+    int numberOfStations = 0, 
+        numberOfPipes = 0;
 
     if(!station.wasDefined)
     {
         std::cout << "There is no station\n";
     }
-    else if (!pipe.wasDefined)
+    else
+    {
+        numberOfStations = 1;
+    }
+    if (!pipe.wasDefined)
     {
         std::cout << "There is no pipe\n";
     }
-    else if (fileIsReadyForWriting(fout))
+    else
     {
-        writeInFile(fout, station);
-        writeInFile(fout, pipe);
+        numberOfPipes = 1;
+    }
+    if ((numberOfStations + numberOfPipes > 0) && fileIsReadyForWriting(fout))
+    {
+        fout << numberOfStations << '\n' 
+             << numberOfPipes << '\n';
+
+        for(int i = 0; i < numberOfStations; ++i)
+            writeInFile(fout, station);
+
+        for(int i = 0; i < numberOfPipes; ++i)
+            writeInFile(fout, pipe);
+
         fout.close();
     }
     else
     {
-        std::cout << "There is an error, file wasn't save!\n";
+        std::cout << "File was not created\n";
     }
     
 }
@@ -167,11 +171,24 @@ void saveConfiguration(const CompressorStation& station,const Pipe& pipe)
 void uploadChanges(CompressorStation& station, Pipe& pipe)
 {
     std::ifstream fin;
+    int numberOfStations, 
+        numberOfPipes;
 
     if(fileIsReadyForReading(fin)) 
     {
-        readFromFileIn(fin, station);
-        readFromFileIn(fin, pipe);
+        fin >> numberOfStations;
+        fin >> numberOfPipes;
+        fin.ignore(1024, '\n');
+        
+        for(int i = 0; i < numberOfStations; i++)
+        {
+            readFromFileIn(fin, station);
+        }   
+        
+        for(int i = 0; i < numberOfPipes; i++)
+        {
+            readFromFileIn(fin, pipe);
+        }
         fin.close();
     }
     else
@@ -184,6 +201,7 @@ void askForStorage(const CompressorStation& station,const Pipe& pipe)
 {
     std::cout << "Do you want to save current data?" << std::endl
               << " Enter 0 if no\n Enter 1 if yes" << std::endl;
+              
     bool shouldBeSaved;
 
     std::cin  >> shouldBeSaved;

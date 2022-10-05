@@ -4,8 +4,8 @@
 
 struct Pipe
 {
-    float lengthInMetres;
-    float diameter;
+    double lengthInMetres;
+    double diameter;
     bool isUnderRepair;
 
     bool wasDefined = false;
@@ -24,13 +24,15 @@ void print(const Pipe& pipe);
 
 void setRepairConditionTo(Pipe& pipe, bool status);
 
-float positiveFloatInput();
-
 void writeInFile(std::ofstream& fout, const Pipe& pipe);
 
 void readFromFileIn(std::ifstream& fin, Pipe& pipe);
 
 std::ostream& operator<<(std::ostream& out, const Pipe& pipe);
+
+std::ifstream& operator>>(std::ifstream& in, Pipe& pipe);
+
+std::ofstream& operator<<(std::ofstream& out, const Pipe& pipe);
 
 
 #endif

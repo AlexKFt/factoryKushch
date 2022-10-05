@@ -3,8 +3,8 @@
 #include <sstream>
 #include "Pipe.hpp"
 #include <limits>
-#include "utilites.hpp"
-
+#include "utils.hpp"
+#include "const.hpp"
 
 
 void InitializePipe(Pipe& pipe)
@@ -18,35 +18,13 @@ void InitializePipe(Pipe& pipe)
 void defineLengthImMetresFor(Pipe& pipe)
 {
     std::cout << "Enter length of pipe in metres: ";
-    pipe.lengthInMetres = positiveFloatInput();
+    pipe.lengthInMetres = getAppropriateNumberInLimits(Interval(0.0, MAX_PIPE_LENGTH, false));
 }
 
 void defineDiameterFor(Pipe& pipe)
 {
-    std::cout << "Enter diameter of pipe in metres: ";
-    pipe.diameter = positiveFloatInput();
-}
-
-float positiveFloatInput()
-{
-    float input;
-    for(;;)
-    {
-        if ((std::cin >> input).good() && (input > 0))  
-        {
-            clearInputBuffer();
-            return input;
-        }            
-        else if (std::cin.fail())
-        {
-            clearInputBuffer();
-            std::cout << "Error. There should be a number!\n";
-        }
-        else
-        {
-            std::cout << "Enter positive value\n";
-        }
-    }
+    std::cout << "Enter diameter of pipe in millimetres: ";
+    pipe.diameter = getAppropriateNumberInLimits(Interval(0.0, MAX_PIPE_DIAMETER, false));
 }
 
 
@@ -91,20 +69,31 @@ void writeInFile(std::ofstream& fout, const Pipe& pipe)
     }
     else
     {
-        fout << pipe.lengthInMetres << ' ' 
-             << pipe.diameter << ' ' 
-             << pipe.isUnderRepair << '\n';
+        fout << pipe;
     }
     
 }
 
+std::ofstream& operator<<(std::ofstream& out, const Pipe& pipe)
+{
+    out  << pipe.lengthInMetres << '\n' 
+         << pipe.diameter << '\n' 
+         << pipe.isUnderRepair << '\n';
+
+    return out;
+}
+
 void readFromFileIn(std::ifstream& fin, Pipe& pipe)
 {
-    std::string content;
-    std::stringstream buffer;
-
-    getline(fin, content);
-    buffer << content;
-    buffer >> pipe.lengthInMetres >> pipe.diameter >> pipe.isUnderRepair;
+    fin >> pipe;
     pipe.wasDefined = true;
+}
+
+std::ifstream& operator>>(std::ifstream& in, Pipe& pipe)
+{
+    in >> pipe.lengthInMetres;
+    in >> pipe.diameter;
+    in >> pipe.isUnderRepair;
+
+    return in;
 }

@@ -38,5 +38,9 @@ void readFromFileIn(std::ifstream& fin, CompressorStation& station);
 
 std::ostream& operator<<(std::ostream& out, const CompressorStation& station);
 
+std::ifstream& operator>>(std::ifstream& in, CompressorStation& station);
+
+std::ofstream& operator<<(std::ofstream& out, const CompressorStation& station);
+
 
 #endif

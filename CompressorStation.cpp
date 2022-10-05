@@ -1,9 +1,9 @@
 #include <fstream>
-#include <string>
+#include "const.hpp"
 #include "CompressorStation.hpp"
 #include <limits>
 #include <iostream>
-#include "utilites.hpp"
+#include "utils.hpp"
 
 
 void InitializeCompressorStation(CompressorStation& station)
@@ -24,79 +24,20 @@ void fillStationNameFor(CompressorStation& station)
 void fillWorkshopsNumberFor(CompressorStation& station) 
 {
     std::cout << "Enter number of workshops: ";
-
-    int input;
-    for(;;)
-    {
-        if ((std::cin >> input).good() && (input > 0))  
-        {
-            station.numberOfWorkshops = input;
-            clearInputBuffer();
-            break;
-        }
-            
-        else if (std::cin.fail())
-        {
-            clearInputBuffer();
-            std::cout << "Error. There should be a number!\n";
-        }else
-        {
-            std::cout << "Enter positive value\n";
-        }  
-    }
+    station.numberOfWorkshops = getAppropriateNumberInLimits(Interval(1, MAX_NUMBER_OF_WORKSHOPS, true));
 }
 
 
 void fillActiveWorkshopsNumberFor(CompressorStation& station)
 {
     std::cout << "Enter number of active workshops: ";
-
-    int input;
-    for(;;)
-    {
-        if ((std::cin >> input).good() && (input >= 0) && (input <= station.numberOfWorkshops))  
-        {
-            station.numberOfActiveWorkshops = input;
-            clearInputBuffer();
-            break;
-        }       
-        else if (std::cin.fail())
-        {
-            clearInputBuffer();
-            std::cout << "Error. There should be a number!\n";
-        }else if(input < 0)
-        {
-            std::cout << "Enter positive value\n";
-        }
-        else
-        {
-            std::cout << "Max number - " <<station.numberOfWorkshops << std::endl;
-        }
-    }    
+    station.numberOfActiveWorkshops = getAppropriateNumberInLimits(Interval(0, station.numberOfWorkshops, true));
 }
 
 void setEfficiencyTo(CompressorStation& station)
 {
     std::cout << "Enter station's rate: ";
-
-    int input;
-    for(;;)
-    {
-        if ((std::cin >> input).good() && (input >= 0) && (input <= 100))  
-        {
-            station.perfomRateZeroToHundred = input;
-            clearInputBuffer();
-            break;
-        }
-        else if (std::cin.fail())
-        {
-            std::cin.clear();
-            std::cout << "Ошибка ввода. Введите число!\n";
-        }else
-        {
-            std::cout << " Введите значение из интервала от 0 до 100\n";
-        } 
-    }
+    station.perfomRateZeroToHundred = getAppropriateNumberInLimits(Interval(0, 100, true));
 }
 
 
@@ -151,22 +92,33 @@ void writeInFile(std::ofstream& fout, const CompressorStation& station)
     }
     else
     {
-        fout << station.name << '\n' 
-             << station.numberOfWorkshops << '\n' 
-             << station.numberOfActiveWorkshops << '\n' 
-             << station.perfomRateZeroToHundred << '\n';
+        fout << station;
     }
+}
+
+std::ofstream& operator<<(std::ofstream& out, const CompressorStation& station)
+{
+    out << station.name << '\n' 
+        << station.numberOfWorkshops << '\n' 
+        << station.numberOfActiveWorkshops << '\n' 
+        << station.perfomRateZeroToHundred << '\n';
+
+    return out;
 }
 
 void readFromFileIn(std::ifstream& fin, CompressorStation& station)
 {
-    std::string content;
-
-    getline(fin, station.name);
-    getline(fin, content); 
-    fin >> station.numberOfWorkshops;
-    fin >> station.numberOfActiveWorkshops;
-    fin >> station.perfomRateZeroToHundred;
-
+    fin >> station;
     station.wasDefined = true;
+}
+
+std::ifstream& operator>>(std::ifstream& in, CompressorStation& station)
+{
+    getline(in, station.name);
+    
+    in >> station.numberOfWorkshops;
+    in >> station.numberOfActiveWorkshops;
+    in >> station.perfomRateZeroToHundred;
+
+    return in;
 }
