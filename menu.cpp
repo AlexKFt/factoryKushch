@@ -1,24 +1,23 @@
 #include <iostream>
 #include <fstream>
 #include "menu.hpp"
-#include "utils.hpp"
+#include "const.hpp"
+
+
 
 int main()
 {   
-    CompressorStation station;
-    Pipe pipe;
+    std::unordered_map<int, CompressorStation> stations;
+    std::unordered_map<int, Pipe> pipes;
 
     int commandIndex;
-
     
     while(true)
     {
         showActions();
         commandIndex = inputForMenu();
-        pickCommand(commandIndex, station, pipe);
+        pickCommand(commandIndex, stations, pipes);
     }
-    
-    return 0;
 }
 
 
@@ -28,8 +27,8 @@ void showActions()
     std::cout << "1: Add pipe" << std::endl;
     std::cout << "2: Add compressor station" << std::endl;
     std::cout << "3: Show object's list" << std::endl;
-    std::cout << "4: Edit pipe" << std::endl;
-    std::cout << "5: Edit compressor station" << std::endl;
+    std::cout << "4: Actions with pipes" << std::endl;
+    std::cout << "5: Actioons with compressor stations" << std::endl;
     std::cout << "6: Save" << std::endl;
     std::cout << "7: Upload" << std::endl;
     std::cout << "0: Exit" << std::endl;
@@ -43,132 +42,162 @@ int inputForMenu()
     const int commandIndexUpperBound = 7;
     int input;
 
-    input = getAppropriateNumberInLimits(Interval(commandIndexLowBound, commandIndexUpperBound, true));
+    input = getAppropriateNumberIn(Interval(commandIndexLowBound, commandIndexUpperBound, true));
     
     return input;
 }
 
-void pickCommand(int commandIndex, CompressorStation& station, Pipe& pipe)
+
+void pickCommand(int commandIndex, 
+                 std::unordered_map<int, CompressorStation>& stations, 
+                 std::unordered_map<int, Pipe>& pipes)
 {
     if (commandIndex == 1)
     {
-        addPipe(pipe);
+        addPipeTo(pipes, Pipe());
     }
     else if (commandIndex == 2)
     {
-        addCompressorStation(station);
+        addCompressorStationTo(stations, CompressorStation());
     }
     else if (commandIndex == 3)
     {
-        showObjectsList(station, pipe);
+        showObjectsList(stations, pipes);
     }
     else if (commandIndex == 4)
     {
-        editPipe(pipe);
+        showOperationsWith(pipes);
     }
     else if (commandIndex == 5)
     {
-        editCompressorStation(station);
+        showOperationsWith(stations);
     }
     else if (commandIndex == 6)
     {
-        saveConfiguration(station, pipe);
+        saveConfiguration(stations, pipes);
     }
     else if (commandIndex == 7)
     {
-        uploadChanges(station, pipe);
+        uploadChanges(stations, pipes);
     }
     else if (commandIndex == 0)
     {
-        askForStorage(station, pipe);
+        askForStorage(stations, pipes);
         exit(0);
     }
 }
 
-void addPipe(Pipe& pipe)
+
+void addPipeTo(std::unordered_map<int, Pipe>& pipes, Pipe&& pipe)
 {
-    InitializePipe(pipe);
+    int static pipeCounter = 1;
+
+    pipes.insert_or_assign(pipeCounter , pipe);
+    pipeCounter++;
 }
 
-void addCompressorStation(CompressorStation& station)
+
+void addCompressorStationTo(std::unordered_map<int, CompressorStation>& stations,
+                            CompressorStation&& station)
 {
-    InitializeCompressorStation(station);
+    int static stationCounter = 1;
+
+    stations.insert_or_assign(stationCounter, station);
+    stationCounter++;
 }
 
-void showObjectsList(const CompressorStation& station, const Pipe& pipe)
+
+void showObjectsList(std::unordered_map<int, CompressorStation>& stations, 
+                     std::unordered_map<int, Pipe>& pipes)
 {
-    print(pipe);
-    print(station);
+    for (const auto& [id, station]: stations)
+    {
+        std::cout << "id: " << id << '\n' << station << std::endl;
+    }
+    for (const auto& [id, pipe]: pipes)
+    {
+        std::cout << "id " << id << '\n' << pipe << std::endl;
+    }
+
 }
 
-void editPipe(Pipe& pipe)
+
+std::unordered_set<int> selectIDs()
+{
+    std::unordered_set<int> IDs;
+    int element = -1;
+    
+    std::cout << "Enter indexes of elements, to exit enter 0" << std::endl;
+    
+    while(element)
+    {
+        std::cout << ">> ";
+        element = getAppropriateNumberIn(Interval(MIN_ID_VALUE, MAX_ID_VALUE, true));
+        IDs.insert(element);
+    }
+    return IDs;
+}
+
+
+void edit(Pipe& pipe, int id)
 {
     bool status;
 
-    std::cout << "Enter repair condition of pipe: " << std::endl;
-    std::cin >> status;
-    clearInputBuffer();
-    setRepairConditionTo(pipe, status);
+    std::cout << "Enter repair condition for pipe [" << id  << "]" <<std::endl
+              << "0 - pipe is working" << std::endl
+              << "1 - pipe is under repair" << std::endl << ">> ";
+
+    status = getAppropriateNumberIn(Interval(0, 1, true));
+    
+    pipe.setRepairCondition(status);
 }
 
-void editCompressorStation(CompressorStation& station)
+
+void edit(CompressorStation& station, int id)
 {   
     bool activation;
+    
+    std::cout << "Station [" << id << "]: "  << std::endl
+              << "To stop one workshop enter 0 " << std::endl
+              << "To activate new workshop enter 1 " << std::endl;
 
-    std::cout << "To stop one workshop enter 0 " << std::endl;
-    std::cout << "To activate new workshop enter 1 " << std::endl;
     std::cin >> activation;
     clearInputBuffer();
 
     if(activation)
-        activateWorkshopAt(station);
+        station.activateWorkshop();
     else
-        StopWorkshopAt(station);
+        station.stopWorkshop();
 }
 
-void saveConfiguration(const CompressorStation& station,const Pipe& pipe)
+
+void saveConfiguration(std::unordered_map<int, CompressorStation>& stations, 
+                       std::unordered_map<int, Pipe>& pipes)
 {
     std::ofstream fout;
-    int numberOfStations = 0, 
-        numberOfPipes = 0;
 
-    if(!station.wasDefined)
+    if ((stations.size() + pipes.size() > 0) && fileIsReadyForWriting(fout))
     {
-        std::cout << "There is no station\n";
-    }
-    else
-    {
-        numberOfStations = 1;
-    }
-    if (!pipe.wasDefined)
-    {
-        std::cout << "There is no pipe\n";
-    }
-    else
-    {
-        numberOfPipes = 1;
-    }
-    if ((numberOfStations + numberOfPipes > 0) && fileIsReadyForWriting(fout))
-    {
-        fout << numberOfStations << '\n' 
-             << numberOfPipes << '\n';
+        fout << stations.size() << '\n' 
+             << pipes.size() << '\n';
 
-        for(int i = 0; i < numberOfStations; ++i)
-            writeInFile(fout, station);
+        for(auto& [id, station]: stations)
+            fout << station;
 
-        for(int i = 0; i < numberOfPipes; ++i)
-            writeInFile(fout, pipe);
+        for(auto& [id, pipe]: pipes)
+            fout << pipe;
 
         fout.close();
     }
     else
     {
         std::cout << "File was not created\n";
-    }
-    
+    } 
 }
 
-void uploadChanges(CompressorStation& station, Pipe& pipe)
+
+void uploadChanges(std::unordered_map<int, CompressorStation>& stations, 
+                   std::unordered_map<int, Pipe>& pipes)
 {
     std::ifstream fin;
     int numberOfStations, 
@@ -178,16 +207,18 @@ void uploadChanges(CompressorStation& station, Pipe& pipe)
     {
         fin >> numberOfStations;
         fin >> numberOfPipes;
-        fin.ignore(1024, '\n');
-        
+        fin >> std::ws;
+
         for(int i = 0; i < numberOfStations; i++)
         {
-            readFromFileIn(fin, station);
+            addCompressorStationTo(stations, CompressorStation(fin));
+            fin >> std::ws;
         }   
         
         for(int i = 0; i < numberOfPipes; i++)
         {
-            readFromFileIn(fin, pipe);
+            addPipeTo(pipes, Pipe(fin));
+            fin >> std::ws;
         }
         fin.close();
     }
@@ -197,7 +228,9 @@ void uploadChanges(CompressorStation& station, Pipe& pipe)
     }
 }
 
-void askForStorage(const CompressorStation& station,const Pipe& pipe)
+
+void askForStorage(std::unordered_map<int, CompressorStation>& stations, 
+                   std::unordered_map<int, Pipe>& pipes)
 {
     std::cout << "Do you want to save current data?" << std::endl
               << " Enter 0 if no\n Enter 1 if yes" << std::endl;
@@ -209,6 +242,6 @@ void askForStorage(const CompressorStation& station,const Pipe& pipe)
 
     if (shouldBeSaved)
     {
-        saveConfiguration(station, pipe);
+        saveConfiguration(stations, pipes);
     }   
 }

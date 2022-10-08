@@ -2,37 +2,30 @@
 #define PIPE_H
 
 
-struct Pipe
+class Pipe
 {
+private:
     double lengthInMetres;
     double diameter;
     bool isUnderRepair;
 
-    bool wasDefined = false;
+    void defineLengthImMetres();
+
+    void defineDiameter();
+
+    void defineRepairCondition();
+
+    friend std::ostream& operator<<(std::ostream& out, const Pipe& pipe);
+
+    friend std::ofstream& operator<<(std::ofstream& out, const Pipe& pipe);
+
+public:
+    Pipe();
+
+    Pipe(std::ifstream& in);
+
+    void setRepairCondition(bool status);
 };
-
-
-void InitializePipe(Pipe& pipe);
-
-void defineLengthImMetresFor(Pipe& pipe);
-
-void defineDiameterFor(Pipe& pipe);
-
-void defineRepairConditionFor(Pipe& pipe);
-
-void print(const Pipe& pipe);
-
-void setRepairConditionTo(Pipe& pipe, bool status);
-
-void writeInFile(std::ofstream& fout, const Pipe& pipe);
-
-void readFromFileIn(std::ifstream& fin, Pipe& pipe);
-
-std::ostream& operator<<(std::ostream& out, const Pipe& pipe);
-
-std::ifstream& operator>>(std::ifstream& in, Pipe& pipe);
-
-std::ofstream& operator<<(std::ofstream& out, const Pipe& pipe);
 
 
 #endif

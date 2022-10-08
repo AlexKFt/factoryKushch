@@ -37,12 +37,14 @@ std::string getFileName();
 
 
 template<typename T>
-T getAppropriateNumberInLimits(Interval<T> interval)
+T getAppropriateNumberIn(Interval<T> interval)
 {
     T input;
 
     for(;;)
     {
+        std::cout << ">> ";
+        
         if ((std::cin >> input).good() && inputBelongsInterval(input, interval))
         {
             clearInputBuffer();

@@ -7,45 +7,43 @@
 #include "const.hpp"
 
 
-void InitializePipe(Pipe& pipe)
+Pipe::Pipe()
 {
-    defineLengthImMetresFor(pipe);
-    defineDiameterFor(pipe);
-    defineRepairConditionFor(pipe);
-    pipe.wasDefined = true;
+    defineLengthImMetres();
+    defineDiameter();
+    defineRepairCondition();
 }
 
-void defineLengthImMetresFor(Pipe& pipe)
+
+Pipe::Pipe(std::ifstream& in)
+{
+    in >> lengthInMetres;
+    in >> diameter;
+    in >> isUnderRepair;
+}
+
+
+void Pipe::defineLengthImMetres()
 {
     std::cout << "Enter length of pipe in metres: ";
-    pipe.lengthInMetres = getAppropriateNumberInLimits(Interval(0.0, MAX_PIPE_LENGTH, false));
+    lengthInMetres = getAppropriateNumberIn(Interval(0.0, MAX_PIPE_LENGTH, false));
 }
 
-void defineDiameterFor(Pipe& pipe)
+
+void Pipe::defineDiameter()
 {
     std::cout << "Enter diameter of pipe in millimetres: ";
-    pipe.diameter = getAppropriateNumberInLimits(Interval(0.0, MAX_PIPE_DIAMETER, false));
+    diameter = getAppropriateNumberIn(Interval(0.0, MAX_PIPE_DIAMETER, false));
 }
 
 
-void defineRepairConditionFor(Pipe& pipe)
+void Pipe::defineRepairCondition()
 {
     std::cout << "Is pipe undere repair?\n Enter 0 if no\n Enter 1 if yes\n ";
-    std::cin >> pipe.isUnderRepair;
+    std::cin >> isUnderRepair;
     clearInputBuffer();
 }
 
-void print(const Pipe& pipe)
-{
-    if (!pipe.wasDefined)
-    {
-        std::cout << "There is no pipe yet!\n";
-    }
-    else
-    {
-        std::cout << pipe;
-    }
-}
 
 std::ostream& operator<<(std::ostream& out, const Pipe& pipe)
 {
@@ -56,23 +54,12 @@ std::ostream& operator<<(std::ostream& out, const Pipe& pipe)
     return out;
 }
 
-void setRepairConditionTo(Pipe& pipe, bool status)
+
+void Pipe::setRepairCondition(bool status)
 {
-    pipe.isUnderRepair = status;
+    isUnderRepair = status;
 }
 
-void writeInFile(std::ofstream& fout, const Pipe& pipe)
-{   
-    if (!pipe.wasDefined)
-    {
-        std::cout << "Pipe should be initialized!\n";
-    }
-    else
-    {
-        fout << pipe;
-    }
-    
-}
 
 std::ofstream& operator<<(std::ofstream& out, const Pipe& pipe)
 {
@@ -83,17 +70,3 @@ std::ofstream& operator<<(std::ofstream& out, const Pipe& pipe)
     return out;
 }
 
-void readFromFileIn(std::ifstream& fin, Pipe& pipe)
-{
-    fin >> pipe;
-    pipe.wasDefined = true;
-}
-
-std::ifstream& operator>>(std::ifstream& in, Pipe& pipe)
-{
-    in >> pipe.lengthInMetres;
-    in >> pipe.diameter;
-    in >> pipe.isUnderRepair;
-
-    return in;
-}

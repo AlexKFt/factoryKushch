@@ -6,73 +6,79 @@
 #include "utils.hpp"
 
 
-void InitializeCompressorStation(CompressorStation& station)
+
+CompressorStation::CompressorStation()
 {
-    fillStationNameFor(station);
-    fillWorkshopsNumberFor(station);
-    fillActiveWorkshopsNumberFor(station);
-    setEfficiencyTo(station);
-    station.wasDefined = true;
+    CompressorStation::setStationName();
+    CompressorStation::setWorkshopsNumber();
+    CompressorStation::setActiveWorkshopsNumber();
+    CompressorStation::setEfficiency();
 }
 
-void fillStationNameFor(CompressorStation& station)
+
+CompressorStation::CompressorStation(std::ifstream& in)
+{
+    getline(in, name);
+    
+    in >> numberOfWorkshops;
+    in >> numberOfActiveWorkshops;
+    in >> perfomRateZeroToHundred;
+}
+
+
+void CompressorStation::setStationName()
 {
     std::cout << "Enter station name: ";
-    getline(std::cin, station.name);
+    getline(std::cin, name);
 }
 
-void fillWorkshopsNumberFor(CompressorStation& station) 
+
+void CompressorStation::setWorkshopsNumber() 
 {
     std::cout << "Enter number of workshops: ";
-    station.numberOfWorkshops = getAppropriateNumberInLimits(Interval(1, MAX_NUMBER_OF_WORKSHOPS, true));
+    numberOfWorkshops = getAppropriateNumberIn(Interval(1, MAX_NUMBER_OF_WORKSHOPS, true));
 }
 
 
-void fillActiveWorkshopsNumberFor(CompressorStation& station)
+void CompressorStation::setActiveWorkshopsNumber()
 {
     std::cout << "Enter number of active workshops: ";
-    station.numberOfActiveWorkshops = getAppropriateNumberInLimits(Interval(0, station.numberOfWorkshops, true));
+    numberOfActiveWorkshops = getAppropriateNumberIn(Interval(0, numberOfWorkshops, true));
 }
 
-void setEfficiencyTo(CompressorStation& station)
+
+void CompressorStation::setEfficiency()
 {
     std::cout << "Enter station's rate: ";
-    station.perfomRateZeroToHundred = getAppropriateNumberInLimits(Interval(0, 100, true));
+    perfomRateZeroToHundred = getAppropriateNumberIn(Interval(0, 100, true));
 }
 
 
-void activateWorkshopAt(CompressorStation& station)
+void CompressorStation::activateWorkshop()
 {   
-    if (freeWorkshopExistAt(station))
-        station.numberOfActiveWorkshops++;
+    if (freeWorkshopExist())
+        numberOfActiveWorkshops++;
 }
 
-bool freeWorkshopExistAt(CompressorStation& station)
+
+bool CompressorStation::freeWorkshopExist() const
 {
-    return station.numberOfWorkshops > station.numberOfActiveWorkshops;
+    return numberOfWorkshops > numberOfActiveWorkshops;
 }
 
-void StopWorkshopAt(CompressorStation& station)
+
+void CompressorStation::stopWorkshop()
 {
-    if (activeWorkshopLeftAt(station))
-        station.numberOfActiveWorkshops--;
+    if (activeWorkshopLeft())
+        numberOfActiveWorkshops--;
 }
 
-bool activeWorkshopLeftAt(CompressorStation& station)
+
+bool CompressorStation::activeWorkshopLeft() const
 {
-    return station.numberOfActiveWorkshops > 0;
+    return numberOfActiveWorkshops > 0;
 }
 
-
-void print(const CompressorStation& station)
-{
-    if (!station.wasDefined)
-    {
-        std::cout << "There is no station yet!\n";
-    }
-    else
-        std::cout << station;
-}
 
 std::ostream& operator<<(std::ostream& out, const CompressorStation& station)
 {
@@ -84,17 +90,6 @@ std::ostream& operator<<(std::ostream& out, const CompressorStation& station)
     return out;
 }
 
-void writeInFile(std::ofstream& fout, const CompressorStation& station)
-{   
-    if (!station.wasDefined)
-    {
-        std::cout << "The station should be initialized! \n";
-    }
-    else
-    {
-        fout << station;
-    }
-}
 
 std::ofstream& operator<<(std::ofstream& out, const CompressorStation& station)
 {
@@ -104,21 +99,4 @@ std::ofstream& operator<<(std::ofstream& out, const CompressorStation& station)
         << station.perfomRateZeroToHundred << '\n';
 
     return out;
-}
-
-void readFromFileIn(std::ifstream& fin, CompressorStation& station)
-{
-    fin >> station;
-    station.wasDefined = true;
-}
-
-std::ifstream& operator>>(std::ifstream& in, CompressorStation& station)
-{
-    getline(in, station.name);
-    
-    in >> station.numberOfWorkshops;
-    in >> station.numberOfActiveWorkshops;
-    in >> station.perfomRateZeroToHundred;
-
-    return in;
 }
