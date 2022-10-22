@@ -1,8 +1,4 @@
-#include <iostream>
-#include <fstream>
 #include "menu.hpp"
-#include "const.hpp"
-
 
 
 int main()
@@ -27,12 +23,12 @@ void showActions()
     std::cout << "1: Add pipe" << std::endl;
     std::cout << "2: Add compressor station" << std::endl;
     std::cout << "3: Show object's list" << std::endl;
-    std::cout << "4: Actions with pipes" << std::endl;
-    std::cout << "5: Actioons with compressor stations" << std::endl;
+    std::cout << "4: Find pipes by filter" << std::endl;
+    std::cout << "5: Find compressor stations by filter" << std::endl;
     std::cout << "6: Save" << std::endl;
     std::cout << "7: Upload" << std::endl;
     std::cout << "0: Exit" << std::endl;
-    std::cout << "\nEnter command index(0 - 7) : ";
+    std::cout << "\nEnter command index(0 - 7) : " << std::endl;
 }
 
 
@@ -66,11 +62,11 @@ void pickCommand(int commandIndex,
     }
     else if (commandIndex == 4)
     {
-        showOperationsWith(pipes);
+        showOperationsWithPipes(pipes);
     }
     else if (commandIndex == 5)
     {
-        showOperationsWith(stations);
+        showOperaitonsWithStations(stations);
     }
     else if (commandIndex == 6)
     {
@@ -107,8 +103,8 @@ void addCompressorStationTo(std::unordered_map<int, CompressorStation>& stations
 }
 
 
-void showObjectsList(std::unordered_map<int, CompressorStation>& stations, 
-                     std::unordered_map<int, Pipe>& pipes)
+void showObjectsList(const std::unordered_map<int, CompressorStation>& stations, 
+                     const std::unordered_map<int, Pipe>& pipes)
 {
     for (const auto& [id, station]: stations)
     {
@@ -121,62 +117,133 @@ void showObjectsList(std::unordered_map<int, CompressorStation>& stations,
 
 }
 
-
-std::unordered_set<int> selectIDs()
+void showOperaitonsWithStations(std::unordered_map<int, CompressorStation>& stations)
 {
-    std::unordered_set<int> IDs;
-    int element = -1;
-    
-    std::cout << "Enter indexes of elements, to exit enter 0" << std::endl;
-    
-    while(element)
+    int commandIndex;
+    std::unordered_set<int> indexes;
+
+    std::cout << "Enter 0 to find station by name" << std::endl
+              << "Enter 1 to find station by percent of active workshops" << std::endl;
+
+    commandIndex = getAppropriateNumberIn(Interval(0, 2, true));
+
+    if (commandIndex == 0)
     {
-        std::cout << ">> ";
-        element = getAppropriateNumberIn(Interval(MIN_ID_VALUE, MAX_ID_VALUE, true));
-        IDs.insert(element);
+        std::string partOfName;
+        std::cout << "Enter station name: ";
+
+        getline(std::cin, partOfName);
+        indexes = findCompressorStationByFilter(stations, checkName, partOfName);
+
+        printIDs(indexes);
     }
-    return IDs;
+    else if(commandIndex == 1)
+    {
+        std::cout << "Enter station workload" << std::endl;
+
+        double activeWorkshopPercent = getAppropriateNumberIn(Interval(0, 100, true));
+        indexes = findCompressorStationByFilter(stations, checkStationWorkload, activeWorkshopPercent);
+
+        printIDs(indexes);
+    }
+    if(!indexes.size())
+    {
+        std::cout << "There is no stations for actions"<< std::endl;
+        return;
+    }
+    
+    chooseEditOrDelite(stations, indexes);
+
 }
 
-
-void edit(Pipe& pipe, int id)
+void showOperationsWithPipes(std::unordered_map<int, Pipe>& pipes)
 {
-    bool status;
+    int commandIndex;
+    std::unordered_set<int> indexes;
 
-    std::cout << "Enter repair condition for pipe [" << id  << "]" <<std::endl
-              << "0 - pipe is working" << std::endl
-              << "1 - pipe is under repair" << std::endl << ">> ";
+    std::cout << "Enter 0 to find pipes by name" << std::endl
+              << "Enter 1 to find pipes in repair" << std::endl
+              << "Enter 2 to find working pipe" << std::endl;
 
-    status = getAppropriateNumberIn(Interval(0, 1, true));
-    
-    pipe.setRepairCondition(status);
+    commandIndex = getAppropriateNumberIn(Interval(0, 2, true));
+
+    if (commandIndex == 0)
+    {
+        std::string partOfName;
+        std::cout << "Enter pipe name: ";
+
+        getline(std::cin, partOfName);
+        indexes = findPipeByFilter(pipes, checkName, partOfName);
+    }
+    else if (commandIndex == 1)
+    {
+        indexes = findPipeByFilter(pipes, checkPipeInRepair, true);
+        printIDs(indexes);
+    }
+    else if(commandIndex == 2)
+    {
+        indexes = findPipeByFilter(pipes, checkPipeInRepair, false);
+        printIDs(indexes);
+    }
+    if(!indexes.size())
+    {
+        std::cout << "There is no pipes for actions"<< std::endl;
+        return;
+    }
+
+    chooseEditOrDelite(pipes, indexes);
 }
 
 
-void edit(CompressorStation& station, int id)
-{   
-    bool activation;
-    
-    std::cout << "Station [" << id << "]: "  << std::endl
-              << "To stop one workshop enter 0 " << std::endl
-              << "To activate new workshop enter 1 " << std::endl;
-
-    std::cin >> activation;
-    clearInputBuffer();
-
-    if(activation)
-        station.activateWorkshop();
-    else
-        station.stopWorkshop();
+void printIDs(const std::unordered_set<int>& indexes)
+{
+    std::cout << "Your IDs: ";
+    for (int id: indexes)
+    {
+        std::cout << id << "  ";
+    }
+    std::cout << std::endl;
 }
 
 
-void saveConfiguration(std::unordered_map<int, CompressorStation>& stations, 
-                       std::unordered_map<int, Pipe>& pipes)
+void editAllElements(std::unordered_map<int, Pipe>& pipes,
+                     std::unordered_set<int>& selection)
+{
+    std::cout << "Enter new condition of pipes" << std::endl
+              << "0 - pipes are working" << std::endl
+              << "1 - pipes are under repair" << std::endl;
+
+    bool status = getAppropriateNumberIn(Interval(0, 1, true));
+
+    for (int id: selection)
+    {
+        (pipes[id]).edit(status);
+        std::cout << "Pipe [" << id << "] repair condition was changed to " << status << std::endl;
+    }
+}
+
+
+void editAllElements(std::unordered_map<int, CompressorStation>& stations,
+                     std::unordered_set<int>& selection)
+{
+    std::cout << "Enter workload for stations" << std::endl;
+    
+    double stationWorkload = getAppropriateNumberIn(Interval(0., 100., true));
+
+    for (int id: selection)
+    {
+        std::cout << "Station [" << id << "]: "  << std::endl;
+        (stations[id]).edit(stationWorkload);
+    }
+}
+
+
+void saveConfiguration(const std::unordered_map<int, CompressorStation>& stations, 
+                       const std::unordered_map<int, Pipe>& pipes)
 {
     std::ofstream fout;
 
-    if ((stations.size() + pipes.size() > 0) && fileIsReadyForWriting(fout))
+    if (fileIsReadyForWriting(fout))
     {
         fout << stations.size() << '\n' 
              << pipes.size() << '\n';
@@ -229,8 +296,8 @@ void uploadChanges(std::unordered_map<int, CompressorStation>& stations,
 }
 
 
-void askForStorage(std::unordered_map<int, CompressorStation>& stations, 
-                   std::unordered_map<int, Pipe>& pipes)
+void askForStorage(const std::unordered_map<int, CompressorStation>& stations, 
+                   const std::unordered_map<int, Pipe>& pipes)
 {
     std::cout << "Do you want to save current data?" << std::endl
               << " Enter 0 if no\n Enter 1 if yes" << std::endl;

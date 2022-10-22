@@ -3,9 +3,8 @@
 
 #include "CompressorStation.hpp"
 #include "Pipe.hpp"
-#include <unordered_map>
-#include <unordered_set>
 #include "utils.hpp"
+#include "const.hpp"
 
 
 void showActions();
@@ -26,79 +25,164 @@ void addCompressorStationTo(std::unordered_map<int, CompressorStation>& stations
                             CompressorStation&& station);
 
 
-void showObjectsList(std::unordered_map<int, CompressorStation>& stations, 
-                     std::unordered_map<int, Pipe>& pipes);
+void showObjectsList(const std::unordered_map<int, CompressorStation>& stations, 
+                     const std::unordered_map<int, Pipe>& pipes);
+
+
+void showOperaitonsWithStations(std::unordered_map<int, CompressorStation>& stations);
+
+
+void showOperationsWithPipes(std::unordered_map<int, Pipe>& pipes);
+
+
+void printIDs(const std::unordered_set<int>& indexes);
 
 
 template<typename T>
-void showOperationsWith(std::unordered_map<int, T>& container)
+std::unordered_set<int> selectIDs(const T& conatainer)
+{
+    std::unordered_set<int> IDs;
+    int element = -1;
+    std::cout << "Enter indexes of elements, to exit enter 0" << std::endl;
+    
+    while(true)
+    {
+        element = getAppropriateNumberIn(Interval(MIN_ID_VALUE, MAX_ID_VALUE, true));
+        
+        if(!element)
+            break;
+
+        if(conatainer.find(element) != conatainer.end())
+            IDs.insert(element);
+        else
+            std::cout << "There is no element with such id" << std::endl;
+        
+    }
+    printIDs(IDs);
+
+    return IDs;
+}
+
+template<typename T>
+void deleteAllElements(T& container, const std::unordered_set<int>& selection)
+{
+    for(int id: selection)
+    {
+        container.erase(id);
+        std::cout << "[" << id << "] was deleted" << std::endl;
+    }
+}
+
+
+template<typename T>
+void deleteElementsIn(std::unordered_map<int, T>& container, std::unordered_set<int> selection)
 {
     int commandIndex;
 
-    std::cout << "Enter 0 to delete some elements" << std::endl
-              << "Enter 1 to edit some elelments" << std::endl;
+    
+
+    if(selection.size() == 1)
+    {
+        printIDs(selection);
+        deleteAllElements(container, selection);
+        return;
+    }
+
+    std::cout << "Enter 0 to delete all selected elements" << std::endl
+              << "Enter 1 to delete some of these elements" << std::endl;
 
     commandIndex = getAppropriateNumberIn(Interval(0, 1, true));
 
+    printIDs(selection);
+
+    if (!commandIndex)
+    {
+        deleteAllElements(container, selection);
+    }
+    if (commandIndex)
+    {
+        printIDs(selection);
+        std::unordered_set<int> indexIntersection = selectIDs(selection);
+        deleteAllElements(container ,indexIntersection);
+    }    
+
+}
+
+
+template<typename T>
+void chooseElemensForEditing(std::unordered_map<int, T>& container, std::unordered_set<int> selection)
+{
+    int commandIndex;
+
+    
+
+    if(selection.size() == 1)
+    {
+        printIDs(selection); 
+        editAllElements(container, selection);
+        return;
+    }
+
+    std::cout << "Enter 0 to edit all selected elements" << std::endl
+              << "Enter 1 to edit some of these elements" << std::endl;
+
+    commandIndex = getAppropriateNumberIn(Interval(0, 1, true));
+
+    printIDs(selection); 
+
+    if (!commandIndex)
+    {
+        editAllElements(container, selection);
+    }
+    else
+    {
+        std::unordered_set<int> indexIntersection = selectIDs(selection);
+        editAllElements(container, indexIntersection);
+    }
+}   
+
+
+template<typename T>
+void chooseEditOrDelite(T& container, std::unordered_set<int> indexes)
+{
+    printIDs(indexes);
+
+    std::cout << "Enter 0 to start deleting " << std::endl
+              << "Enter 1 to start editing" << std::endl;
+
+    int commandIndex;
+
+    commandIndex = getAppropriateNumberIn(Interval(0, 1, true));
+    
     if (commandIndex == 0)
     {
-        deleteElementsIn(container);
+        deleteElementsIn(container, indexes);
     }
     else if (commandIndex == 1)
     {
-        editElementsIn(container);
-    } 
-}
-
-
-std::unordered_set<int> selectIDs();
-
-template<typename T>
-void deleteElementsIn(std::unordered_map<int, T>& container)
-{
-    std::unordered_set<int> IDs = selectIDs();
-
-    for (int id: IDs)
-    {
-        if(container.find(id) != container.end())
-            container.erase(id);
-    }  
-}
-
-
-template<typename T>
-void editElementsIn(std::unordered_map<int, T>& container)
-{
-    std::unordered_set<int> IDs = selectIDs();
-
-    for (int id: IDs)
-    {
-        if(container.find(id) != container.end())
-            edit(container[id], id);
+        chooseElemensForEditing(container, indexes);
     }
 }
 
 
-void edit(Pipe& pipe, int id);
+void editAllElements(std::unordered_map<int, CompressorStation>& stations,
+                     std::unordered_set<int>& selection);
 
 
-void edit(CompressorStation& station, int id);
+void editAllElements(std::unordered_map<int, Pipe>& pipes,
+                     std::unordered_set<int>& selection);
 
 
-void saveConfiguration(std::unordered_map<int, CompressorStation>& stations, 
-                       std::unordered_map<int, Pipe>& pipes);
+void saveConfiguration(const std::unordered_map<int, CompressorStation>& stations, 
+                       const std::unordered_map<int, Pipe>& pipes);
 
 
 void uploadChanges(std::unordered_map<int, CompressorStation>& stations, 
                    std::unordered_map<int, Pipe>& pipes);
 
 
-void askForStorage(std::unordered_map<int, CompressorStation>& stations, 
-                   std::unordered_map<int, Pipe>& pipes);
-
-
-
-
+void askForStorage(const std::unordered_map<int, CompressorStation>& stations, 
+                   const std::unordered_map<int, Pipe>& pipes);
 
 
 

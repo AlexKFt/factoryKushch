@@ -1,6 +1,13 @@
+#ifndef UTILS_H
+#define UTILS_H
+
 #include <iostream>
 #include <fstream>
 #include <limits>
+#include <unordered_map>
+#include <unordered_set>
+#include "CompressorStation.hpp"
+#include "Pipe.hpp"
 
 
 template<typename T>
@@ -83,6 +90,7 @@ bool inputBelongsInterval(T input, Interval<T> interval)
 
 
 template<typename T>
+
 void printOpenedInterval(Interval<T> interval)
 {
     std::cout << "Enter number in range between "
@@ -98,3 +106,57 @@ void printClosedInterval(Interval<T> interval)
               << interval.getLowerBound() << " to " 
               << interval.getUpperBound() << std::endl;
 } 
+
+
+template<typename T>
+using StationFilter = bool(*)(const CompressorStation& station, T parametr);
+
+
+template<typename T>
+std::unordered_set<int> findCompressorStationByFilter(const std::unordered_map<int, CompressorStation>& stations,
+                                                      StationFilter<T> filter, 
+                                                      T parametr)
+{
+    std::unordered_set<int> indexes;
+
+    for (auto& [id, station]: stations)
+    {
+        if (filter(station, parametr))
+            indexes.insert(id);
+    }
+    return indexes;
+}
+
+
+template<typename T>
+using PipeFilter = bool(*)(const Pipe& pipe, T parametr);
+
+
+template<typename T>
+std::unordered_set<int> findPipeByFilter(const std::unordered_map<int, Pipe>& pipes, 
+                                         PipeFilter<T> filter, T parametr)
+{
+    std::unordered_set<int> indexes;
+
+    for(auto& [id, pipe]: pipes)
+    {
+        if (filter(pipe, parametr))
+            indexes.insert(id);
+    }
+    return indexes;
+}
+
+
+
+bool checkName(const CompressorStation& station, std::string name);
+
+bool checkName(const Pipe& pipe, std::string name);
+
+bool checkPipeInRepair(const Pipe& pipe, bool status);
+
+bool checkStationWorkload(const CompressorStation& station, double percent);
+
+bool kmp(std::string sample, const std::string& line);
+
+
+#endif 

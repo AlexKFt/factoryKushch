@@ -1,8 +1,5 @@
-#include <fstream>
 #include "const.hpp"
 #include "CompressorStation.hpp"
-#include <limits>
-#include <iostream>
 #include "utils.hpp"
 
 
@@ -29,27 +26,28 @@ CompressorStation::CompressorStation(std::ifstream& in)
 void CompressorStation::setStationName()
 {
     std::cout << "Enter station name: ";
+    std::cin>>std::ws;
     getline(std::cin, name);
 }
 
 
 void CompressorStation::setWorkshopsNumber() 
 {
-    std::cout << "Enter number of workshops: ";
+    std::cout << "Enter number of workshops: " << std::endl;
     numberOfWorkshops = getAppropriateNumberIn(Interval(1, MAX_NUMBER_OF_WORKSHOPS, true));
 }
 
 
 void CompressorStation::setActiveWorkshopsNumber()
 {
-    std::cout << "Enter number of active workshops: ";
+    std::cout << "Enter number of active workshops: " << std::endl;
     numberOfActiveWorkshops = getAppropriateNumberIn(Interval(0, numberOfWorkshops, true));
 }
 
 
 void CompressorStation::setEfficiency()
 {
-    std::cout << "Enter station's rate: ";
+    std::cout << "Enter station's rate: " << std::endl;
     perfomRateZeroToHundred = getAppropriateNumberIn(Interval(0, 100, true));
 }
 
@@ -80,6 +78,34 @@ bool CompressorStation::activeWorkshopLeft() const
 }
 
 
+
+double CompressorStation::getWorkload() const
+{
+    return ((double)numberOfActiveWorkshops / numberOfWorkshops) * 100;
+}
+
+
+void CompressorStation::edit(double stationWorkload)
+{
+    if(this->getWorkload() <= stationWorkload)
+    {
+        while(this->getWorkload() <= stationWorkload)
+        {   
+            this->activateWorkshop();
+            if(this->getWorkload() == 100 && stationWorkload == 100)
+                break;
+        }
+    }
+    else
+    {
+        while(this->getWorkload() > stationWorkload) 
+            this->stopWorkshop();
+    
+    }
+}
+
+
+
 std::ostream& operator<<(std::ostream& out, const CompressorStation& station)
 {
     out << "name: " << station.name << std::endl;
@@ -100,3 +126,5 @@ std::ofstream& operator<<(std::ofstream& out, const CompressorStation& station)
 
     return out;
 }
+
+

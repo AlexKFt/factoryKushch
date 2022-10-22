@@ -9,6 +9,7 @@ private:
     int numberOfWorkshops;
     int numberOfActiveWorkshops;
     int perfomRateZeroToHundred;
+    
 
     void setStationName();
 
@@ -18,6 +19,10 @@ private:
 
     void setEfficiency();
 
+    void activateWorkshop();
+
+    void stopWorkshop();
+
     bool freeWorkshopExist() const;
 
     bool activeWorkshopLeft() const;
@@ -26,14 +31,16 @@ private:
 
     friend std::ofstream& operator<<(std::ofstream& out, const CompressorStation& station);
 
+    friend bool checkName(const CompressorStation& station, std::string name);
+
 public:
     CompressorStation();
 
     CompressorStation(std::ifstream& in);
 
-    void activateWorkshop();
+    double getWorkload() const;
 
-    void stopWorkshop();
+    void edit(double stationWorkload);
 
 };
 
