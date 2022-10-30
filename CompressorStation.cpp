@@ -1,7 +1,8 @@
-#include "const.hpp"
 #include "CompressorStation.hpp"
 #include "utils.hpp"
 
+
+const int MAX_NUMBER_OF_WORKSHOPS = 10000;
 
 
 CompressorStation::CompressorStation()

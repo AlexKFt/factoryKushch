@@ -1,7 +1,7 @@
 all: factory
 
-factory: CompressorStation.o Pipe.o menu.o utils.o const.o
-	g++ CompressorStation.o Pipe.o menu.o utils.o const.o -o factory
+factory: CompressorStation.o Pipe.o menu.o utils.o 
+	g++ CompressorStation.o Pipe.o menu.o utils.o -o factory
 
 CompressorStation.o: CompressorStation.cpp
 	g++ -c CompressorStation.cpp
@@ -14,9 +14,6 @@ menu.o: menu.cpp
 
 utils.o: utils.cpp
 	g++ -c utils.cpp
-
-const.o: const.cpp
-	g++ -c const.cpp
 
 clean:
 	rm -rf *.o factory

@@ -1,6 +1,10 @@
 #include "menu.hpp"
 
 
+const int MIN_ID_VALUE = 0;
+const int MAX_ID_VALUE = 100;
+
+
 int main()
 {   
     std::unordered_map<int, CompressorStation> stations;
@@ -86,20 +90,20 @@ void pickCommand(int commandIndex,
 
 void addPipeTo(std::unordered_map<int, Pipe>& pipes, Pipe&& pipe)
 {
-    int static pipeCounter = 1;
+    int static pipeId = 1;
 
-    pipes.insert_or_assign(pipeCounter , pipe);
-    pipeCounter++;
+    pipes.insert_or_assign(pipeId, pipe);
+    pipeId++;
 }
 
 
 void addCompressorStationTo(std::unordered_map<int, CompressorStation>& stations,
                             CompressorStation&& station)
 {
-    int static stationCounter = 1;
+    int static stationId = 1;
 
-    stations.insert_or_assign(stationCounter, station);
-    stationCounter++;
+    stations.insert_or_assign(stationId, station);
+    stationId++;
 }
 
 
@@ -152,7 +156,7 @@ void showOperaitonsWithStations(std::unordered_map<int, CompressorStation>& stat
         return;
     }
     
-    chooseEditOrDelite(stations, indexes);
+    chooseEditOrDelete(stations, indexes);
 
 }
 
@@ -191,7 +195,7 @@ void showOperationsWithPipes(std::unordered_map<int, Pipe>& pipes)
         return;
     }
 
-    chooseEditOrDelite(pipes, indexes);
+    chooseEditOrDelete(pipes, indexes);
 }
 
 

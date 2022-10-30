@@ -1,7 +1,11 @@
 #include <sstream>
 #include "Pipe.hpp"
 #include "utils.hpp"
-#include "const.hpp"
+
+
+
+const double MAX_PIPE_LENGTH = 100000;
+const double MAX_PIPE_DIAMETER = 1500.0;
 
 
 Pipe::Pipe()
@@ -15,7 +19,7 @@ Pipe::Pipe()
 
 Pipe::Pipe(std::ifstream& in)
 {
-    getline(in, name);
+    getline(in>>std::ws, name);
 
     in >> lengthInMetres;
     in >> diameter;

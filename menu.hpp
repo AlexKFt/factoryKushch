@@ -4,7 +4,11 @@
 #include "CompressorStation.hpp"
 #include "Pipe.hpp"
 #include "utils.hpp"
-#include "const.hpp"
+
+
+
+extern const int MIN_ID_VALUE;
+extern const int MAX_ID_VALUE;
 
 
 void showActions();
@@ -39,7 +43,7 @@ void printIDs(const std::unordered_set<int>& indexes);
 
 
 template<typename T>
-std::unordered_set<int> selectIDs(const T& conatainer)
+std::unordered_set<int> selectIDs(T& container)
 {
     std::unordered_set<int> IDs;
     int element = -1;
@@ -52,7 +56,7 @@ std::unordered_set<int> selectIDs(const T& conatainer)
         if(!element)
             break;
 
-        if(conatainer.find(element) != conatainer.end())
+        if(container.find(element) != container.end())
             IDs.insert(element);
         else
             std::cout << "There is no element with such id" << std::endl;
@@ -64,7 +68,7 @@ std::unordered_set<int> selectIDs(const T& conatainer)
 }
 
 template<typename T>
-void deleteAllElements(T& container, const std::unordered_set<int>& selection)
+void deleteAllElements(std::unordered_map<int, T>& container, const std::unordered_set<int>& selection)
 {
     for(int id: selection)
     {
@@ -79,11 +83,8 @@ void deleteElementsIn(std::unordered_map<int, T>& container, std::unordered_set<
 {
     int commandIndex;
 
-    
-
     if(selection.size() == 1)
     {
-        printIDs(selection);
         deleteAllElements(container, selection);
         return;
     }
@@ -117,8 +118,7 @@ void chooseElemensForEditing(std::unordered_map<int, T>& container, std::unorder
     
 
     if(selection.size() == 1)
-    {
-        printIDs(selection); 
+    { 
         editAllElements(container, selection);
         return;
     }
@@ -143,9 +143,8 @@ void chooseElemensForEditing(std::unordered_map<int, T>& container, std::unorder
 
 
 template<typename T>
-void chooseEditOrDelite(T& container, std::unordered_set<int> indexes)
+void chooseEditOrDelete(std::unordered_map<int, T>& container, std::unordered_set<int> indexes)
 {
-    printIDs(indexes);
 
     std::cout << "Enter 0 to start deleting " << std::endl
               << "Enter 1 to start editing" << std::endl;
