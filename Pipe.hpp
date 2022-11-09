@@ -4,8 +4,11 @@
 #include <string>
 
 class Pipe
-{
+{   
+public:
+    static int maxPipeId;
 private:
+    int id;
     std::string name;
     double lengthInMetres;
     double diameter;
@@ -29,12 +32,16 @@ private:
 
     friend bool checkName(const Pipe& pipe, std::string name);
 
+    friend bool checkPipeDiameter(const Pipe& pipe, double diameter);
+
 public:
     Pipe();
 
     Pipe(std::ifstream& in);
 
     void edit(bool status);
+
+    int getId() const;
     
 };
 

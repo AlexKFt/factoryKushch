@@ -4,6 +4,7 @@
 
 const int MAX_NUMBER_OF_WORKSHOPS = 10000;
 
+int CompressorStation::maxStationId = 1;
 
 CompressorStation::CompressorStation()
 {
@@ -11,16 +12,19 @@ CompressorStation::CompressorStation()
     CompressorStation::setWorkshopsNumber();
     CompressorStation::setActiveWorkshopsNumber();
     CompressorStation::setEfficiency();
+    id = maxStationId++;
 }
 
 
 CompressorStation::CompressorStation(std::ifstream& in)
 {
     getline(in, name);
-    
+    in >> id;
     in >> numberOfWorkshops;
     in >> numberOfActiveWorkshops;
     in >> perfomRateZeroToHundred;
+
+    updateMaxId(maxStationId, id);
 }
 
 
@@ -106,9 +110,15 @@ void CompressorStation::edit(double stationWorkload)
 }
 
 
+int CompressorStation::getId() const
+{
+    return id;
+}
+
 
 std::ostream& operator<<(std::ostream& out, const CompressorStation& station)
 {
+    out << "Id: " << station.id << std::endl;
     out << "name: " << station.name << std::endl;
     out << "number of workshops: "<< station.numberOfWorkshops << std::endl;
     out << "number of active workshops: " << station.numberOfActiveWorkshops << std::endl;
@@ -121,6 +131,7 @@ std::ostream& operator<<(std::ostream& out, const CompressorStation& station)
 std::ofstream& operator<<(std::ofstream& out, const CompressorStation& station)
 {
     out << station.name << '\n' 
+        << station.id << '\n'
         << station.numberOfWorkshops << '\n' 
         << station.numberOfActiveWorkshops << '\n' 
         << station.perfomRateZeroToHundred << '\n';

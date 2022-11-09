@@ -59,6 +59,11 @@ bool checkPipeInRepair(const Pipe& pipe, bool status)
     return (pipe.isUnderRepair == status);
 }
 
+bool checkPipeDiameter(const Pipe& pipe, double diameter)
+{
+    return pipe.diameter == diameter;
+}
+
 bool checkName(const Pipe& pipe, std::string name)
 {
     return kmp(name, pipe.name);
@@ -92,4 +97,10 @@ bool kmp(std::string sample, const std::string& line)
             return true;
     }
     return false;
+}
+
+void updateMaxId(int& currentMaxId, int newElementId)
+{
+    if (currentMaxId <= newElementId) 
+        currentMaxId = newElementId + 1;
 }

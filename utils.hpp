@@ -154,9 +154,12 @@ bool checkName(const Pipe& pipe, std::string name);
 
 bool checkPipeInRepair(const Pipe& pipe, bool status);
 
+bool checkPipeDiameter(const Pipe& pipe, double diameter);
+
 bool checkStationWorkload(const CompressorStation& station, double percent);
 
 bool kmp(std::string sample, const std::string& line);
 
+void updateMaxId(int& currentMaxId, int newElementId);
 
 #endif 

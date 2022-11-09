@@ -7,6 +7,7 @@
 const double MAX_PIPE_LENGTH = 100000;
 const double MAX_PIPE_DIAMETER = 1500.0;
 
+int Pipe::maxPipeId = 1;
 
 Pipe::Pipe()
 {
@@ -14,16 +15,18 @@ Pipe::Pipe()
     defineLengthImMetres();
     defineDiameter();
     defineRepairCondition();
+    id = maxPipeId++;
 }
-
 
 Pipe::Pipe(std::ifstream& in)
 {
     getline(in>>std::ws, name);
-
+    in >> id;
     in >> lengthInMetres;
     in >> diameter;
     in >> isUnderRepair;
+
+    updateMaxId(maxPipeId, id);
 }
 
 void Pipe::setPipeName()
@@ -62,6 +65,12 @@ void Pipe::edit(bool status)
 }
 
 
+int Pipe::getId() const
+{
+    return id;
+}
+
+
 void Pipe::setRepairCondition(bool status)
 {
     isUnderRepair = status;
@@ -69,6 +78,7 @@ void Pipe::setRepairCondition(bool status)
 
 std::ostream& operator<<(std::ostream& out, const Pipe& pipe)
 {
+    out << "Id: " << pipe.id << std::endl;
     out << "Pipe name: " << pipe.name << std::endl;
     out << "Length of pipe: " << pipe.lengthInMetres << std::endl;
     out << "Diameter of pipe: " << pipe.diameter << std::endl;
@@ -78,11 +88,10 @@ std::ostream& operator<<(std::ostream& out, const Pipe& pipe)
 }
 
 
-
-
 std::ofstream& operator<<(std::ofstream& out, const Pipe& pipe)
 {
     out << pipe.name << '\n'
+        << pipe.id << '\n'
         << pipe.lengthInMetres << '\n' 
         << pipe.diameter << '\n' 
         << pipe.isUnderRepair << '\n';

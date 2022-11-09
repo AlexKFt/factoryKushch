@@ -4,7 +4,10 @@
 
 class CompressorStation
 {
+public:
+    static int maxStationId;
 private:
+    int id;
     std::string name;
     int numberOfWorkshops;
     int numberOfActiveWorkshops;
@@ -41,6 +44,8 @@ public:
     double getWorkload() const;
 
     void edit(double stationWorkload);
+
+    int getId() const;
 
 };
 

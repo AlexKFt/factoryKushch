@@ -31,6 +31,7 @@ void showActions()
     std::cout << "5: Find compressor stations by filter" << std::endl;
     std::cout << "6: Save" << std::endl;
     std::cout << "7: Upload" << std::endl;
+    std::cout << "8: Add connection between stations"  << std::endl;
     std::cout << "0: Exit" << std::endl;
     std::cout << "\nEnter command index(0 - 7) : " << std::endl;
 }
@@ -39,7 +40,7 @@ void showActions()
 int inputForMenu()
 {
     const int commandIndexLowBound = 0;
-    const int commandIndexUpperBound = 7;
+    const int commandIndexUpperBound = 8;
     int input;
 
     input = getAppropriateNumberIn(Interval(commandIndexLowBound, commandIndexUpperBound, true));
@@ -80,6 +81,10 @@ void pickCommand(int commandIndex,
     {
         uploadChanges(stations, pipes);
     }
+    else if (commandIndex == 8)
+    {
+        
+    }
     else if (commandIndex == 0)
     {
         askForStorage(stations, pipes);
@@ -90,20 +95,14 @@ void pickCommand(int commandIndex,
 
 void addPipeTo(std::unordered_map<int, Pipe>& pipes, Pipe&& pipe)
 {
-    int static pipeId = 1;
-
-    pipes.insert_or_assign(pipeId, pipe);
-    pipeId++;
+    pipes.insert_or_assign(pipe.getId(), pipe);
 }
 
 
 void addCompressorStationTo(std::unordered_map<int, CompressorStation>& stations,
                             CompressorStation&& station)
 {
-    int static stationId = 1;
-
-    stations.insert_or_assign(stationId, station);
-    stationId++;
+    stations.insert_or_assign(station.getId(), station);
 }
 
 
@@ -112,11 +111,11 @@ void showObjectsList(const std::unordered_map<int, CompressorStation>& stations,
 {
     for (const auto& [id, station]: stations)
     {
-        std::cout << "id: " << id << '\n' << station << std::endl;
+        std::cout << station << std::endl;
     }
     for (const auto& [id, pipe]: pipes)
     {
-        std::cout << "id " << id << '\n' << pipe << std::endl;
+        std::cout << pipe << std::endl;
     }
 
 }

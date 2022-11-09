@@ -1,10 +1,8 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include "CompressorStation.hpp"
-#include "Pipe.hpp"
+#include "Network.hpp"
 #include "utils.hpp"
-
 
 
 extern const int MIN_ID_VALUE;
