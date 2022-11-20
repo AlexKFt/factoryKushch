@@ -82,6 +82,10 @@ bool CompressorStation::activeWorkshopLeft() const
     return numberOfActiveWorkshops > 0;
 }
 
+int CompressorStation::getNumberOfWorkshops() const
+{
+    return numberOfWorkshops;
+}
 
 
 double CompressorStation::getWorkload() const

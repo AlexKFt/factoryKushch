@@ -30,6 +30,8 @@ void showActions()
     std::cout << "6: Save" << std::endl;
     std::cout << "7: Upload" << std::endl;
     std::cout << "8: Add connection between stations"  << std::endl;
+    std::cout << "9: Delete connection between stations" << std::endl;
+    std::cout << "10: Unmount station from network" << std::endl;
     std::cout << "0: Exit" << std::endl;
     std::cout << "\nEnter command index(0 - 7) : " << std::endl;
 }
@@ -38,7 +40,7 @@ void showActions()
 int inputForMenu()
 {
     const int commandIndexLowBound = 0;
-    const int commandIndexUpperBound = 8;
+    const int commandIndexUpperBound = 10;
     int input;
 
     input = getAppropriateNumberIn(Interval(commandIndexLowBound, commandIndexUpperBound, true));
@@ -71,15 +73,24 @@ void pickCommand(int commandIndex, Network& net)
     }
     else if (commandIndex == 6)
     {
+
         net.saveConfiguration();
     }
     else if (commandIndex == 7)
     {
-        net.uploadChanges();
+        net.loadConfiguration();
     }
     else if (commandIndex == 8)
     {
         net.addLink();
+    }
+    else if(commandIndex == 9)
+    {
+        net.deleteLink();
+    }
+    else if (commandIndex == 10)
+    {
+        net.unmountStation();
     }
     else if (commandIndex == 0)
     {

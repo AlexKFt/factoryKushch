@@ -22,10 +22,6 @@ private:
 
     void setEfficiency();
 
-    void activateWorkshop();
-
-    void stopWorkshop();
-
     bool freeWorkshopExist() const;
 
     bool activeWorkshopLeft() const;
@@ -43,7 +39,13 @@ public:
 
     double getWorkload() const;
 
+    int getNumberOfWorkshops() const;
+
     void edit(double stationWorkload);
+
+    void activateWorkshop();
+
+    void stopWorkshop();
 
     int getId() const;
 

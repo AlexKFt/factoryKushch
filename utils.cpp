@@ -1,6 +1,19 @@
 #include "utils.hpp"
 #include "vector"
 
+
+
+void printIDs(const std::unordered_set<int>& indexes)
+{
+    std::cout << "Your IDs: ";
+    for (int id: indexes)
+    {
+        std::cout << id << "  ";
+    }
+    std::cout << std::endl;
+}
+
+
 void clearInputBuffer()
 {
     std::cin.clear();
@@ -51,7 +64,7 @@ bool checkName(const CompressorStation& station, std::string name)
 
 bool checkStationWorkload(const CompressorStation& station, double percent)
 {
-    return station.getWorkload() <= percent;
+    return station.getWorkload() != percent;
 }
 
 bool checkPipeInRepair(const Pipe& pipe, bool status)

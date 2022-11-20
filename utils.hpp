@@ -30,6 +30,7 @@ public:
     bool bordersAreIncluded() {return bordersIncluded;}
 };
 
+void printIDs(const std::unordered_set<int>& indexes);
 
 void clearInputBuffer();
 

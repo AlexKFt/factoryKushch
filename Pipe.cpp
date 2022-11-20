@@ -46,8 +46,18 @@ void Pipe::defineLengthImMetres()
 
 void Pipe::defineDiameter()
 {
-    std::cout << "Enter diameter of pipe in millimetres: " << std::endl;
-    diameter = getAppropriateNumberIn(Interval(0.0, MAX_PIPE_DIAMETER, false));
+    int commandIndex;
+    std::cout << "Enter diameter of pipe in millimetres" << std::endl
+              << "0: 500 mm; 1: 700 mm; 2: 1400 mm;" << std::endl;
+
+    commandIndex = getAppropriateNumberIn(Interval(0, 2, true));
+
+    if(commandIndex == 0)
+        diameter = 500;
+    else if(commandIndex == 1)
+        diameter = 700;
+    else if(commandIndex == 2)
+        diameter = 1400;
 }
 
 
