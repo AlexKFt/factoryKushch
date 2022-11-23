@@ -32,6 +32,8 @@ public:
 
 void printIDs(const std::unordered_set<int>& indexes);
 
+void printIDs(const std::unordered_map<int, CompressorStation>& stations);
+
 void clearInputBuffer();
 
 

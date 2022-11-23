@@ -14,11 +14,23 @@ void printIDs(const std::unordered_set<int>& indexes)
 }
 
 
+void printIDs(const std::unordered_map<int, CompressorStation>& stations)
+{
+    std::cout << "Stations IDs: ";
+    for (auto& [id, station]: stations)
+    {
+        std::cout << id << "  ";
+    }
+    std::cout << std::endl;
+}
+
+
 void clearInputBuffer()
 {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
+
 
 bool fileIsReadyForWriting(std::ofstream& fout)
 {
@@ -62,25 +74,30 @@ bool checkName(const CompressorStation& station, std::string name)
     return kmp(name, station.name);
 }
 
+
 bool checkStationWorkload(const CompressorStation& station, double percent)
 {
     return station.getWorkload() != percent;
 }
+
 
 bool checkPipeInRepair(const Pipe& pipe, bool status)
 {
     return (pipe.isUnderRepair == status);
 }
 
+
 bool checkPipeDiameter(const Pipe& pipe, double diameter)
 {
     return pipe.diameter == diameter;
 }
 
+
 bool checkName(const Pipe& pipe, std::string name)
 {
     return kmp(name, pipe.name);
 }
+
 
 std::vector<int> prefix_function_kmp(std::string& summary)
 {
@@ -100,6 +117,7 @@ std::vector<int> prefix_function_kmp(std::string& summary)
     return pi;
 }
 
+
 bool kmp(std::string sample, const std::string& line)
 {
     std::string summary = sample + '#' + line;
@@ -111,6 +129,7 @@ bool kmp(std::string sample, const std::string& line)
     }
     return false;
 }
+
 
 void updateMaxId(int& currentMaxId, int newElementId)
 {

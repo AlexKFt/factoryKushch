@@ -57,6 +57,7 @@ private:
     bool IsPipeAvailable(int id);
     bool IsCSAvailable(int id);
 
+    void createGraph();
 
     void editAllElements(std::unordered_map<int, CompressorStation>& stations,
                      std::unordered_set<int>& selection);
@@ -171,6 +172,8 @@ public:
     void showOperationsWithStations();
 
     void showOperationsWithPipes();
+
+    void showTopologicalSortResult();
 
     void loadConfiguration();
 

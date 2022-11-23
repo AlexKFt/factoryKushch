@@ -7,6 +7,8 @@ const int MAX_ID_VALUE = 100;
 
 void Network::addLink()
 {
+    printIDs(stations);
+
     Link link;
     link.startStationId = chooseStation();
     if(link.startStationId == -1)
@@ -28,9 +30,8 @@ int Network::chooseStation()
     while(1)
     {
         int id = getAppropriateNumberIn(Interval(-1, MAX_ID_VALUE, true));
-        if (id==-1)
-            return -1;//!!!!!!!!!!!!!!!!!
-
+        if (id == -1)
+            return -1;
         if (IsCSAvailable(id))
         {
             return id;
@@ -41,6 +42,7 @@ int Network::chooseStation()
         }
     }
 }
+
 
 int Network::choosePipe()
 {
@@ -116,7 +118,6 @@ void Network::deleteLink(int id)
 }
 
 
-
 int Network::getCSNumberOfLinks(int id)
 {
     int numberOfLinks = 0;
@@ -125,8 +126,6 @@ int Network::getCSNumberOfLinks(int id)
             numberOfLinks++;
     return numberOfLinks;
 }
-
-
 
 
 void Network::addPipe(Pipe&& pipe)
@@ -140,7 +139,7 @@ void Network::addCompressorStation(CompressorStation&& station)
     stations.insert_or_assign(station.getId(), station);
 }
 
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! repetetive part of code
+
 void Network::deleteAllElements(std::unordered_map<int, Pipe>& container, const std::unordered_set<int>& selection)
 {
     for(int id: selection)
@@ -155,6 +154,7 @@ void Network::deleteAllElements(std::unordered_map<int, Pipe>& container, const 
         std::cout << "[" << id << "] was deleted" << std::endl;
     }
 }
+
 
 void Network::deleteAllElements(std::unordered_map<int, CompressorStation>& container, const std::unordered_set<int>& selection)
 {
@@ -176,6 +176,7 @@ bool Network::PipeHasLinks(int id)
     {
         return !IsPipeAvailable(id);
     }
+
 
 bool Network::CSHasLinks(int id)
 {
@@ -213,11 +214,13 @@ void Network::showObjectsList()
         showLinks();
 }
 
+
 void Network::showPipesList()
 {
     for (const auto& [id, pipe]: pipes)
         std::cout << pipe << std::endl;
 }
+
 
 void Network::showStationsList()
 {
@@ -305,7 +308,42 @@ void Network::showOperationsWithPipes()
 }
 
 
+void Network::showTopologicalSortResult()
+{
 
+    createGraph();
+    std::stack<int> networkNumeration = graph.topologicalSort();
+    int i = 1;
+
+    while(!networkNumeration.empty())
+    {
+        std::cout << "Number " << i << ": " 
+                  << networkNumeration.top()
+                  << std::endl;
+
+        networkNumeration.pop();
+        i++;
+    }
+}
+
+
+void Network::createGraph()
+{
+    std::unordered_map<int, std::vector<int>> edges;
+    std::vector<int> stationsPair;
+    
+    stationsPair.push_back(0);
+    stationsPair.push_back(0);
+
+    for (auto& [id, link]: Links)
+    {
+        stationsPair[0] = link.startStationId;
+        stationsPair[1] = link.finishStationId;
+
+        edges.insert({id, stationsPair});
+    }
+    graph.setNewState(edges);
+}
 
 
 void Network::saveConfiguration() const
