@@ -1,13 +1,16 @@
 all: factory
 
-factory: CompressorStation.o Pipe.o menu.o utils.o Network.o Link.o
-	g++ Link.o Network.o CompressorStation.o Pipe.o menu.o utils.o -o factory
+factory: CompressorStation.o Pipe.o menu.o utils.o Network.o Link.o Graph.o
+	g++ Graph.o Link.o Network.o CompressorStation.o Pipe.o menu.o utils.o -o factory
 
 Network.o: Network.cpp
 	g++ -c Network.cpp
 
 Link.o: Link.cpp
 	g++ -c Link.cpp
+
+Graph.o: Graph.cpp
+	g++ -c Graph.cpp
 
 CompressorStation.o: CompressorStation.cpp
 	g++ -c CompressorStation.cpp

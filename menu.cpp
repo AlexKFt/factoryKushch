@@ -30,7 +30,9 @@ void showActions()
     std::cout << "9: Delete connection between stations" << std::endl;
     std::cout << "10: Unmount station from network" << std::endl;
     std::cout << "11: Show topological sort result" << std::endl;
-    std::cout << "0: Exit" << std::endl;
+    std::cout << "12: Find the shortest distance between stations in network" << std::endl;
+    std::cout << "13: Find maximum flow" << std::endl;
+    std::cout << "0: Exit" << std::endl; 
     std::cout << "\nEnter command index(0 - 7) : " << std::endl;
 }
 
@@ -38,7 +40,7 @@ void showActions()
 int inputForMenu()
 {
     const int commandIndexLowBound = 0;
-    const int commandIndexUpperBound = 11;
+    const int commandIndexUpperBound = 13;
     int input;
 
     input = getAppropriateNumberIn(Interval(commandIndexLowBound, commandIndexUpperBound, true));
@@ -93,6 +95,14 @@ void pickCommand(int commandIndex, Network& net)
     else if (commandIndex == 11)
     {
         net.showTopologicalSortResult();
+    }
+    else if (commandIndex == 12)
+    {
+        net.findLeastDistanceBetweenStations();
+    }
+    else if (commandIndex == 13)
+    {
+        net.findMaxFlow();
     }
     else if (commandIndex == 0)
     {

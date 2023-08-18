@@ -1,5 +1,5 @@
-#ifndef PIPE_H
-#define PIPE_H
+#ifndef Pipe_H
+#define Pipe_H
 
 #include <string>
 
@@ -42,7 +42,11 @@ public:
     void edit(bool status);
 
     int getId() const;
-    
+
+    double getLength() const;
+
+    double getCapacity() const;
+
 };
 
 

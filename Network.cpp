@@ -2,6 +2,7 @@
 #include "iostream"
 
 
+
 const int MIN_ID_VALUE = 0;
 const int MAX_ID_VALUE = 100;
 
@@ -329,16 +330,13 @@ void Network::showTopologicalSortResult()
 
 void Network::createGraph()
 {
-    std::unordered_map<int, std::vector<int>> edges;
-    std::vector<int> stationsPair;
-    
-    stationsPair.push_back(0);
-    stationsPair.push_back(0);
+    std::unordered_map<int, std::pair<int, int>> edges;
+    std::pair<int, int> stationsPair;
 
     for (auto& [id, link]: Links)
     {
-        stationsPair[0] = link.startStationId;
-        stationsPair[1] = link.finishStationId;
+        stationsPair.first = link.startStationId;
+        stationsPair.second = link.finishStationId;
 
         edges.insert({id, stationsPair});
     }
@@ -371,6 +369,146 @@ void Network::saveConfiguration() const
     {
         std::cout << "File was not created\n";
     } 
+}
+
+
+
+
+
+const double INF = 100000000;
+
+
+void Network::findLeastDistanceBetweenStations()
+{   
+    auto checkPoints = getStartAndFinishPoint();
+    
+    if (checkPoints.first == -1)
+        return;
+
+    int start = checkPoints.first;
+    int finish = checkPoints.second;
+
+    std::unordered_map<int, int> indexesFromZero;
+    std::unordered_map<int, int> originalIndexes;
+    int currentIndex = 0;
+
+    for (auto& [id, station]: stations)
+        if(CSHasLinks(id))
+        {
+            originalIndexes.insert_or_assign(currentIndex, id);
+            indexesFromZero.insert_or_assign(id, currentIndex++);
+        }
+    std::vector<std::vector<double>> weights = getWeightsByLength(indexesFromZero);
+    std::vector<std::pair<int, double>> distances = graph.dijkstra(weights, indexesFromZero[start], indexesFromZero[finish]);
+
+    int parent = distances[indexesFromZero[finish]].first;
+
+    std::stack<int> path;
+    path.push(indexesFromZero[finish]);
+    while(parent != -1)
+    {
+        path.push(parent);
+        parent = distances[parent].first;
+    }
+    while(!path.empty())
+    {
+        std::cout << originalIndexes[path.top()] << " >> ";
+        path.pop();
+    }
+    std::cout << std::endl;
+    std::cout << "The least path between station " << start << " and " << finish << ": "
+              << distances[indexesFromZero[finish]].second<< std::endl;
+}
+
+
+std::pair<int, int> Network::getStartAndFinishPoint()
+{   
+    int start;
+    int finish;
+
+    std::cout << "Enter start point: " << std::endl;
+    start = getAppropriateNumberIn(Interval(MIN_ID_VALUE, MAX_ID_VALUE, true));
+    if (!CSHasLinks(start))
+    {
+        std::cout << "There is no station with such id in network" << std::endl;
+        return std::make_pair(-1, -1);
+    }
+
+    std::cout << "Enter finish point: " << std::endl;
+    finish = getAppropriateNumberIn(Interval(MIN_ID_VALUE, MAX_ID_VALUE, true));
+
+    if (!CSHasLinks(finish))
+    {
+        std::cout << "There is no station with such id in network" << std::endl;
+        return std::make_pair(-1, -1);
+    }
+
+    if (start == finish)
+    {
+        std::cout << "You have entered the same point as start and finish" << std::endl;
+        return std::make_pair(-1, -1);
+    }
+    return std::make_pair(start, finish);
+}
+
+
+std::vector<std::vector<double>> Network::getWeightsByLength(std::unordered_map<int, int>& indexesFromZero)
+{
+    int n = indexesFromZero.size();
+    std::vector<std::vector<double>> weights (n, std::vector<double>(n, INF));
+
+    for(auto& [id, pipe]: pipes)
+    {
+        if(PipeHasLinks(id) && checkPipeInRepair(pipe, false))
+            weights[indexesFromZero[Links[id].startStationId]][indexesFromZero[Links[id].finishStationId]]
+             = std::min(weights[indexesFromZero[Links[id].startStationId]][indexesFromZero[Links[id].finishStationId]],
+              pipe.getLength());
+    }
+    return weights;
+}
+
+
+void Network::findMaxFlow()
+{
+    auto checkPoints = getStartAndFinishPoint();
+    
+    if (checkPoints.first == -1)
+        return;
+
+    int start = checkPoints.first;
+    int finish = checkPoints.second;
+
+    std::unordered_map<int, int> indexesFromZero;
+    int currentIndex = 0;
+
+    for (auto& [id, station]: stations)
+        if(CSHasLinks(id))
+            indexesFromZero.insert_or_assign(id, currentIndex++);
+
+    std::vector<std::vector<std::pair<double, double>>> weights = getWeightsByCapacity(indexesFromZero);
+    
+    std::cout <<"Maximum flow is: " << graph.findMaximumFlow(weights,indexesFromZero[start],indexesFromZero[finish]) << std::endl;
+
+}
+
+
+std::vector<std::vector<std::pair<double, double>>> Network::getWeightsByCapacity(std::unordered_map<int, int>& indexesFromZero)
+{
+    int n = indexesFromZero.size();
+    std::vector<std::vector<std::pair<double, double>>> weights (n, std::vector<std::pair<double, double>>(n, std::make_pair(0, 0)));
+
+    for(auto& [id, pipe]: pipes)
+    {
+        if(PipeHasLinks(id) && checkPipeInRepair(pipe, false))
+            weights[indexesFromZero[Links[id].startStationId]][indexesFromZero[Links[id].finishStationId]].first += calculatePipeCapacity(pipe);
+            
+    }
+    return weights;
+}
+
+double Network::calculatePipeCapacity(const Pipe& pipe)
+{
+    return stations[Links[pipe.getId()].startStationId].getWorkload() * 1000000 * pipe.getCapacity();
 }
 
 

@@ -90,7 +90,7 @@ int CompressorStation::getNumberOfWorkshops() const
 
 double CompressorStation::getWorkload() const
 {
-    return ((double)numberOfActiveWorkshops / numberOfWorkshops) * 100;
+    return ((double)numberOfActiveWorkshops / numberOfWorkshops);
 }
 
 

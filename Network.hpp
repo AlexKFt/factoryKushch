@@ -16,7 +16,7 @@ std::ostream& operator<<(std::ostream& out, const Link& l);
 class Network
 {
 private:
-    Graph graph;///!!!!!!!!!!!!
+    Graph graph;
     std::vector<double> standartDiametrValues {500, 700, 1400};
     std::unordered_map<int, Link> Links;
     std::unordered_map<int, CompressorStation> stations;
@@ -174,6 +174,18 @@ public:
     void showOperationsWithPipes();
 
     void showTopologicalSortResult();
+
+    void findLeastDistanceBetweenStations();
+
+    std::pair<int, int> getStartAndFinishPoint();
+
+    std::vector<std::vector<double>> getWeightsByLength(std::unordered_map<int, int>& indexesFromZero);
+
+    std::vector<std::vector<std::pair<double, double>>> getWeightsByCapacity(std::unordered_map<int, int>& indexesFromZero);
+
+    double calculatePipeCapacity(const Pipe& pipe);
+
+    void findMaxFlow();
 
     void loadConfiguration();
 

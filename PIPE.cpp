@@ -1,11 +1,11 @@
 #include <sstream>
 #include "Pipe.hpp"
 #include "utils.hpp"
+#include "cmath"
 
 
-
-const double MAX_PIPE_LENGTH = 100000;
-const double MAX_PIPE_DIAMETER = 1500.0;
+const double MAX_Pipe_LENGTH = 100000;
+const double MAX_Pipe_DIAMETER = 1500.0;
 
 int Pipe::maxPipeId = 1;
 
@@ -40,7 +40,7 @@ void Pipe::setPipeName()
 void Pipe::defineLengthImMetres() 
 {
     std::cout << "Enter length of pipe in metres: " << std::endl;
-    lengthInMetres = getAppropriateNumberIn(Interval(0.0, MAX_PIPE_LENGTH, false));
+    lengthInMetres = getAppropriateNumberIn(Interval(0.0, MAX_Pipe_LENGTH, false));
 }
 
 
@@ -80,6 +80,16 @@ int Pipe::getId() const
     return id;
 }
 
+
+double Pipe::getLength() const
+{
+    return lengthInMetres;
+}
+
+double Pipe::getCapacity() const
+{
+    return std::sqrt(std::pow(diameter*0.0001 , 5)/ lengthInMetres);
+}
 
 void Pipe::setRepairCondition(bool status)
 {
